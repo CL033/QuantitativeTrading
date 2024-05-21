@@ -1,6 +1,5 @@
 import backtrader as bt
 import pandas as pd
-from choose_stock.choose_stock import michael_sivy_filter
 from entity.stock_info import *
 import os
 from startegy.base_strategy import BaseStrategy
@@ -43,15 +42,44 @@ def get_adjusted_date(current_date):
     return adjusted_date
 
 
+def michael_sivy_filter(stock_data):
+    if stock_data is not None:
+        average_equity_ratio = stock_data['equity_ratio'].mean()
+        average_current_ratio = stock_data['current_ratio'].mean()
+
+        # 筛选符合条件的行：equity_ratio大于平均equity_ratio且current_ratio小于平均current_ratio
+        selected_rows = stock_data[
+            (stock_data['equity_ratio'] > average_equity_ratio) & (stock_data['current_ratio'] < average_current_ratio)]
+
+        # 提取对应的code
+        selected_codes = selected_rows['code'].tolist()
+    #
+    # selected_stocks = [
+    #     d for d in stockDatas
+    #     if len(d) > 0  # 至少要有一根实际bar
+    #        and d.datetime.date(0) == currentDate
+    #        and not np.isnan(d.equity_ratio)  # 确保不是NaN
+    #        and not np.isnan(d.dv_ratio)
+    #        and not np.isnan(d.pe_ttm)
+    #        and not np.isnan(d.EPS)
+    #        and not np.isnan(d.dv_ratio)
+    #        and d.dv_ratio > avg_dvRatio  # 股息率大于平均值
+    #        and d.EPS > avg_EPS  # 每股收益增长率大于市场平均值
+    #        and d.equity_ratio < avg_equityRatio  # 产权比率小于市场平均值
+    #        and d.current_ratio > avg_currentRatio  # 流动比率大于市场平均值
+    #        and 0 < d.pe_ttm < avg_peTTm  # 市盈率为正且小于市场平均值
+    # ]
+    return selected_codes
+
+
 class QuarterEndChecker(object):
     """
     自定义定时器，每个季度触发，如果是休息日则继续往后延续直到第一个工作日
     """
-    def __init__(self, datafeed):
+
+    def __init__(self):
         self.comparison_dates = [(3, 31), (6, 30), (9, 30), (12, 31)]
-        self.datafeed = datafeed
         self.current_date = (-1, -1)
-        print(str(self.datafeed))
 
     def __call__(self, d):
         for i, (month, day) in enumerate(self.comparison_dates):
@@ -65,7 +93,6 @@ class QuarterEndChecker(object):
                 baseline += timedelta(days=1)
             self.comparison_dates[i] = (baseline.month, baseline.day)
         self.current_date = (d.month, d.day)
-        # print(str(self.comparison_dates))
         return any((month, day) == self.current_date for month, day in self.comparison_dates)
 
 
@@ -74,12 +101,7 @@ class MichaelSivyStrategy(BaseStrategy):
         num_volume=10  # 取成交量前100名
     )
 
-    # choose_stock_df = list()
-    # csv_files_dir = "D:/Pycharm/Data/overview_all_data4/test1"
-
     def __init__(self):
-
-        # print(len(self.data))
         self.end_stock = []  # 最后一天的股票池股票（未到调仓时间）
         self.lastStock = []  # 上次交易股票的列表
         # 记录最后一天的选股结果
@@ -90,14 +112,12 @@ class MichaelSivyStrategy(BaseStrategy):
         # 最后一天时间，即数据的最后一天
         if self.data.datetime.date(0) is not None:
             self.data_end_date = self.data.datetime.date(0)
-        self.quarter_end_checker = QuarterEndChecker(self.data)
+        # self.quarter_end_checker = QuarterEndChecker()
+
         # 定时器
         self.add_timer(
             when=bt.Timer.SESSION_START,
-            # monthcarry=True,
-            allow=self.quarter_end_checker
-            # monthdays=self.p.rebal_monthday ,# 每个月2号触发
-            # monthcarry=True, # 如果平衡日不是交易日，则顺延触发
+            allow=QuarterEndChecker()
         )
         # 读取名字列表
         name_df = pd.read_csv('/home/c/Downloads/QuantitativeTrading/stockData/stockListName.csv', encoding='GBK')
@@ -142,22 +162,23 @@ class MichaelSivyStrategy(BaseStrategy):
 
     def notify_timer(self, timer, when, *args, **kwargs):
         self.stock_state_list = []
-        self.rebalance_portfolio()  # 进行持仓调整
+        self.rebalanced_portfolio()  # 进行持仓调整
 
     # 进行调仓
-    def rebalance_portfolio(self):
+    def rebalanced_portfolio(self):
         print(self.data0.datetime.date(0))
         current_date = self.data0.datetime.date(0)
-        # 获取当前年份
-        current_year = current_date.year
-        adjustment_dates = {
-            4: (current_year, 3, 31),
-            7: (current_year, 6, 30),
-            10: (current_year, 9, 30),
-            1: (current_year - 1, 12, 31)
-        }
-        adjusted_date = datetime(
-            *adjustment_dates.get(current_date.month, (current_year, current_date.month, current_date.day)))
+        adjusted_date = get_adjusted_date(current_date)
+        # # 获取当前年份
+        # current_year = current_date.year
+        # adjustment_dates = {
+        #     4: (current_year, 3, 31),
+        #     7: (current_year, 6, 30),
+        #     10: (current_year, 9, 30),
+        #     1: (current_year - 1, 12, 31)
+        # }
+        # adjusted_date = datetime(
+        #     *adjustment_dates.get(current_date.month, (current_year, current_date.month, current_date.day)))
 
         filename = adjusted_date.strftime('%Y%m%d')  # 格式化日期为 YYYYMMDD
         csv_folder_path = '/home/c/Downloads/QuantitativeTrading/stockData/new'
@@ -169,7 +190,7 @@ class MichaelSivyStrategy(BaseStrategy):
             df = pd.read_csv(csv_file_path).fillna(0)
             print(f"成功读取了日期为 {filename} 的数据")
         else:
-            print(f"未找到日期为 {filename} 的CSV文件")
+            raise FileNotFoundError(f"未找到日期为 {filename} 的CSV文件")
 
         if len(self.data0) > 0:
             self.currDate = self.data0.datetime.date(0)
@@ -191,6 +212,7 @@ class MichaelSivyStrategy(BaseStrategy):
 
         # 按成交量从大到小排序
         self.ranks.sort(key=lambda d: d.volume, reverse=True)
+
         # 取前 num_volume名
         self.ranks = self.ranks[0:self.p.num_volume]
 
@@ -198,13 +220,13 @@ class MichaelSivyStrategy(BaseStrategy):
         sell_list = set(self.lastStock) - set(self.ranks)
 
         # 处理股票池中的股票
-        self.handel_order(self.ranks, self.order_list,sell_list)
+        self.handel_order(self.ranks, self.order_list, sell_list)
 
         # 跟踪上次买入的股票列表
         self.lastStock = self.ranks
 
     # 进行选股
-    def filter_stocks(self, codeList):
-        selected_datas = [data for data in self.datas if data._name in codeList]
+    def filter_stocks(self, code_list):
+        selected_datas = [data for data in self.datas if data._name in code_list]
         print(f"筛选后的数据源长度：{len(selected_datas)}")
         return selected_datas
