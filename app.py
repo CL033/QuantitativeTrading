@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from entity.base_cerebro_data import BaseCerebroData
 from startegy.factor_stock_strategy import FactorStockStrategy
-from startegy.michael_Sivy_strategy import MichaelSivyStrategy
+from startegy.michael_sivy_strategy import MichaelSivyStrategy
 from analysis.analyser import Analyzer
 from util.data import BackTestData
 import glob
@@ -19,7 +19,7 @@ CORS(app, supports_credentials=True) # 允许跨域访问
 
 @app.route('/')
 def hello_world():  # put application's code here
-    return 'Hello aa!'
+    return 'Hello aa !'
 
 @app.route('/chooseStock',methods=['POST'])
 def ChooseStockPool():
@@ -37,7 +37,7 @@ def ChooseStockPool():
 
 @app.route('/michael_sivy_chooseStock',methods=['POST'])
 def Michael_sivy_choose_ChooseStockPool():
-    datadir = 'D:/Pycharm/Workplace/Trader/stockData/micsiv_testdata'
+    datadir = '/home/c/Downloads/QuantitativeTrading/stockData/micsiv_testdata'
     datafilelist = glob.glob(os.path.join(datadir, '*.csv'))
     # 将目录datadir之中的数据加载进系统之中
     fromdate = datetime.datetime(2023,1,1)

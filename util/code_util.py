@@ -1,6 +1,5 @@
-import akshare as ak
 import pandas as pd
-import  requests
+import requests
 from bs4 import BeautifulSoup
 import json
 index={'上证指数': 'sh000001',

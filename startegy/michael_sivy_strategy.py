@@ -4,14 +4,54 @@ from choose_stock.choose_stock import michael_sivy_filter
 from entity.stock_info import *
 import os
 from startegy.base_strategy import BaseStrategy
-from datetime import  datetime,timedelta
+from datetime import datetime, timedelta
+
+# 对应的日期调整
+CONSTANT_ADJUST_DATE = {
+    4: (3, 31),
+    7: (6, 30),
+    10: (9, 30),
+    1: (12, 31)
+}
 
 
-class QuarterEndChecker1(object):
-    def __init__(self):
+def is_trading_day(date):
+    """
+    判断是否在交易日
+    """
+    # 判断是否在10月1号到7号之间
+    if date.month == 10 and 1 <= date.day <= 7:
+        return False
+    # 判断是否是周一到周五
+    return date.weekday() < 5
 
+
+def get_adjusted_date(current_date):
+    """
+    对时间进行调整，比如9月30是休息日，则调仓会延续要10月份进行，那么获取的年报数据仍然是9月30的年报
+    """
+    current_year = current_date.year
+    adjust_month_day = CONSTANT_ADJUST_DATE.get(current_date.month)
+
+    if adjust_month_day:
+        adjust_month, adjust_day = adjust_month_day
+        if current_date.month == 1:
+            current_year -= 1
+        adjusted_date = datetime(current_year, adjust_month, adjust_day)
+    else:
+        adjusted_date = current_date
+    return adjusted_date
+
+
+class QuarterEndChecker(object):
+    """
+    自定义定时器，每个季度触发，如果是休息日则继续往后延续直到第一个工作日
+    """
+    def __init__(self, datafeed):
         self.comparison_dates = [(3, 31), (6, 30), (9, 30), (12, 31)]
+        self.datafeed = datafeed
         self.current_date = (-1, -1)
+        print(str(self.datafeed))
 
     def __call__(self, d):
         for i, (month, day) in enumerate(self.comparison_dates):
@@ -20,20 +60,25 @@ class QuarterEndChecker1(object):
                 adjustment = 2 if baseline.weekday() == 5 else 1
                 adjusted_date = baseline + timedelta(days=adjustment)
                 self.comparison_dates[i] = (adjusted_date.month, adjusted_date.day)
+
+            while not is_trading_day(baseline):
+                baseline += timedelta(days=1)
+            self.comparison_dates[i] = (baseline.month, baseline.day)
         self.current_date = (d.month, d.day)
+        # print(str(self.comparison_dates))
         return any((month, day) == self.current_date for month, day in self.comparison_dates)
 
 
 class MichaelSivyStrategy(BaseStrategy):
     params = dict(
-        rebal_day=['3-31', '6-30', '9-30', '12-31'],  # 设置调仓日期
         num_volume=10  # 取成交量前100名
     )
 
     # choose_stock_df = list()
-    csv_files_dir = "D:/Pycharm/Data/overview_all_data4/test1"
+    # csv_files_dir = "D:/Pycharm/Data/overview_all_data4/test1"
 
     def __init__(self):
+
         # print(len(self.data))
         self.end_stock = []  # 最后一天的股票池股票（未到调仓时间）
         self.lastStock = []  # 上次交易股票的列表
@@ -45,21 +90,24 @@ class MichaelSivyStrategy(BaseStrategy):
         # 最后一天时间，即数据的最后一天
         if self.data.datetime.date(0) is not None:
             self.data_end_date = self.data.datetime.date(0)
+        self.quarter_end_checker = QuarterEndChecker(self.data)
         # 定时器
         self.add_timer(
-            when = bt.Timer.SESSION_START,
-            monthcarry=True,
-            allow=QuarterEndChecker1()
+            when=bt.Timer.SESSION_START,
+            # monthcarry=True,
+            allow=self.quarter_end_checker
             # monthdays=self.p.rebal_monthday ,# 每个月2号触发
             # monthcarry=True, # 如果平衡日不是交易日，则顺延触发
         )
         # 读取名字列表
-        name_df = pd.read_csv('D:/Pycharm/Workplace/Trader/stockData/name.csv', encoding='GBK')
+        name_df = pd.read_csv('/home/c/Downloads/QuantitativeTrading/stockData/stockListName.csv', encoding='GBK')
         self.code_name_dict = dict(zip(name_df['code'], name_df['name']))
 
     def next(self):
-
         pass
+        # self.counter = 0  # 重置计数
+        # self.next_operation_day = self.next_operation_day.replace(hour=0, minute=0, second=0, microsecond=0)
+
         # if self.data.datetime.date(0) == self.data_end_date:  # 当前时间是否是最后一天
         #     # 最后一天入选的股票
         #     end_stock = michael_sivy_filter(self.stocks, self.data.datetime.date(0))
@@ -96,13 +144,23 @@ class MichaelSivyStrategy(BaseStrategy):
         self.stock_state_list = []
         self.rebalance_portfolio()  # 进行持仓调整
 
+    # 进行调仓
     def rebalance_portfolio(self):
-
-        print(len(self.datas))
-        print(self.data0.datetime.date(0).year)
+        print(self.data0.datetime.date(0))
         current_date = self.data0.datetime.date(0)
-        filename = current_date.strftime('%Y%m%d')  # 格式化日期为 YYYYMMDD
-        csv_folder_path = 'D:/Pycharm/Data/new'
+        # 获取当前年份
+        current_year = current_date.year
+        adjustment_dates = {
+            4: (current_year, 3, 31),
+            7: (current_year, 6, 30),
+            10: (current_year, 9, 30),
+            1: (current_year - 1, 12, 31)
+        }
+        adjusted_date = datetime(
+            *adjustment_dates.get(current_date.month, (current_year, current_date.month, current_date.day)))
+
+        filename = adjusted_date.strftime('%Y%m%d')  # 格式化日期为 YYYYMMDD
+        csv_folder_path = '/home/c/Downloads/QuantitativeTrading/stockData/new'
         filename = filename + '.csv'
         csv_file_path = os.path.join(csv_folder_path, filename)
 
@@ -112,6 +170,7 @@ class MichaelSivyStrategy(BaseStrategy):
             print(f"成功读取了日期为 {filename} 的数据")
         else:
             print(f"未找到日期为 {filename} 的CSV文件")
+
         if len(self.data0) > 0:
             self.currDate = self.data0.datetime.date(0)
         else:
@@ -125,64 +184,27 @@ class MichaelSivyStrategy(BaseStrategy):
         self.order_list = []
         # 最终选取结果
         self.ranks = michael_sivy_filter(df)
-        print(str(self.ranks))
+        print(f"code：{len(self.ranks)}")
+        # print(str(self.ranks))
+        self.ranks = self.filter_stocks(self.ranks)
+        # print(str(self.ranks))
+
         # 按成交量从大到小排序
         self.ranks.sort(key=lambda d: d.volume, reverse=True)
         # 取前 num_volume名
         self.ranks = self.ranks[0:self.p.num_volume]
 
         # 对于上期入选的股票，本次不入选则先进行平仓
-        data_toSell = set(self.lastStock) - set(self.ranks)
-        for d in data_toSell:
-            lowerprice = d.close[0] * 0.9 + 0.02
-            validday = d.datetime.datetime(1)
-            print('sell 平仓', d._name, self.getposition(d).size)
-            o = self.close(data=d, exectype=bt.Order.Limit, price=lowerprice, valid=validday)
-            # 记录订单
-            self.order_list.append(o)
+        sell_list = set(self.lastStock) - set(self.ranks)
 
-        # 本次下单的股票
-        # 每只股票买如资金百分比，预留2%的资金以应付佣金和计算误差
-        if (len(self.ranks) > 0):
-            buypercentage = (1 - 0.02) / len(self.ranks)
-        else:
-            buypercentage = 0
+        # 处理股票池中的股票
+        self.handel_order(self.ranks, self.order_list,sell_list)
 
-        # 得到目标市值
-        targetvalue = buypercentage * self.broker.getvalue()
-        # 为保证先卖后买，股票按照持仓市值从大到小排序
-        self.ranks.sort(key=lambda d: self.broker.getvalue([d]), reverse=True)
-        self.log('下单, 目标的股票个数 %i, targetvalue %.2f, 当前总市值 %.2f' %
-                 (len(self.ranks), targetvalue, self.broker.getvalue()))
-
-        print(f'{self.data0.datetime.date(0)} 当天入选股票: {"、".join(stock._name for stock in self.ranks)}')
-        # print('{}当天入选股票{}\n'.format(self.data0.datetime.date(0),str(self.ranks)))
-        # 买入股票池中的股票
-        for d in self.ranks:
-            # print('股票代码',d._name)
-
-            if (len(d.open) > 0 and len(d.close) > 0):
-                # 按照次日开盘价算
-                size = int(
-                    abs((self.broker.getvalue([d]) - targetvalue) / d.open[1] // 100 * 100))
-                # 该股票的下一个实际交易日
-                validday = d.datetime.datetime(1)
-                # 如果持仓过多，卖
-                if self.broker.getvalue([d]) > targetvalue:
-                    # 次日跌停价近似值
-                    lowerprice = d.close[0] * 0.9 + 0.02
-                    print(f"{d._name}持仓过多调整")
-                    o = self.sell(data=d, size=size, exectype=bt.Order.Limit,
-                                  price=lowerprice, valid=validday)
-                # 持仓过少，买
-                else:
-                    # 次日涨停价近似值
-                    upperprice = d.close[0] * 1.1 - 0.02
-                    print(f"{d._name}持仓过少调整")
-                    o = self.buy(data=d, size=size, exectype=bt.Order.Limit,
-                                 price=upperprice, valid=validday)
-                # print(o)
-                # 记录股票订单
-                self.order_list.append(o)
         # 跟踪上次买入的股票列表
         self.lastStock = self.ranks
+
+    # 进行选股
+    def filter_stocks(self, codeList):
+        selected_datas = [data for data in self.datas if data._name in codeList]
+        print(f"筛选后的数据源长度：{len(selected_datas)}")
+        return selected_datas
