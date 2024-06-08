@@ -1,6 +1,7 @@
 import backtrader as bt
 import pandas as pd
 from collections import defaultdict
+import util.constant as CONSTANT
 import csv
 from entity.stock_state import StockState
 
@@ -11,15 +12,20 @@ class BaseStrategy(bt.Strategy):
     trade_df = defaultdict(list)
     # 记录股票调仓过程
     stock_state_list = list()
+    name_df = pd.read_csv(CONSTANT.DEFAULT_DIR + '/stockListName.csv', encoding='GBK')
+    code_name_dict = dict(zip(name_df['code'], name_df['name']))
 
-    # 日志函数
+
     def log(self, txt, dt=None):
+        """
+        日志函数
+        """
         # 以第一个数据data0，即指数作为时间标准
         dt = dt or self.data0.datetime.date(0)
         print("%s，%s" % (dt.isoformat(), txt))
 
     def notify_order(self, order):
-        if order.status in [order.Submitted,order.Accepted]:
+        if order.status in [order.Submitted, order.Accepted]:
             # 订单状态 submited/accepted，无动作
             return
         if order.status in [order.Completed]:
@@ -27,26 +33,29 @@ class BaseStrategy(bt.Strategy):
                 if order.executed.psize == order.executed.size:
                     buy_percent = 100.0
                 elif order.executed.psize > order.executed.size:
-                    buy_percent = ((order.executed.size / (order.executed.psize - order.executed.size))* 100)
+                    buy_percent = ((order.executed.size / (order.executed.psize - order.executed.size)) * 100)
                 self.log('买单执行，%s，买入价格：%.2f，买入数量：%i，剩余持仓：%i，仓位变动：%0.2f%%' %
-                         (order.data._name,order.executed.price, order.executed.size,order.executed.psize,buy_percent))
-                stock_state = StockState(order.data._name, get_code_name(order.data._name), 1, order.executed.price,
-                                         order.executed.size,'{:.2f}%'.format(buy_percent)).to_dict()
+                         (order.data._name, order.executed.price, order.executed.size, order.executed.psize,
+                          buy_percent))
+                stock_state = StockState(order.data._name, self.code_name_dict.get(order.data._name,"NULL"), 1, order.executed.price,
+                                         order.executed.size, '{:.2f}%'.format(buy_percent)).to_dict()
                 self.stock_state_list.append(stock_state)
 
             elif order.issell():
                 sell_percent = ((order.executed.size / (abs(order.executed.size) + order.executed.psize)) * 100)
                 self.log('卖单执行，%s，卖出价格：%.2f，卖出数量：%i, 剩余持仓：%i，仓位变动：%0.2f%%' %
-                         (order.data._name, order.executed.price, order.executed.size, order.executed.psize,sell_percent))
-                stock_state = StockState(order.data._name, get_code_name(order.data._name), -1, order.executed.price,
-                                        order.executed.size,'{:.2f}%'.format(sell_percent)).to_dict()
+                         (order.data._name, order.executed.price, order.executed.size, order.executed.psize,
+                          sell_percent))
+                stock_state = StockState(order.data._name, self.code_name_dict.get(order.data._name,"NULL"), -1, order.executed.price,
+                                         order.executed.size, '{:.2f}%'.format(sell_percent)).to_dict()
                 self.stock_state_list.append(stock_state)
 
         else:
             self.log('订单作废，%s，%s，isbuy=%i，size %i,open price %.2f' % (
-            order.data._name, order.getstatusname(), order.isbuy(), order.created.size, order.data.open[0]))
-        trade_date = self.data0.datetime.date(0).strftime('%Y-%m-%d')
+                order.data._name, order.getstatusname(), order.isbuy(), order.created.size, order.data.open[0]))
 
+        trade_date = self.data0.datetime.date(0).strftime('%Y-%m-%d')
+        # print("riqi1",trade_date)
         self.trade_df[trade_date] = self.stock_state_list
 
     # 记录交易收益
@@ -65,13 +74,76 @@ class BaseStrategy(bt.Strategy):
                                                                position.size * (position.adjbase - position.price)]
         self.fund_df.loc[len(self.fund_df.index)] = [d, cash, value]
 
-def get_code_name(stock_code):
-    name = "null"
-    with open('D:/Pycharm/Workplace/Trader/stockData/name.csv', newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if row['code'] == stock_code:
-                name = row['name']
-                break  # 找到匹配项后，停止遍历
+    def handel_order(self, order_data_list=None, order_list=None, sell_data_list = None):
+        """
+        处理订单
+        order_data_list：需要执行调仓的股票列表
+        order_list：记录订单列表
+        sell_data_list：不在本次股票池之中，需要进行平仓
+        """
 
-    return  name
+        # 先进行平仓处理
+        if order_list is None:
+            order_list = []
+        if sell_data_list is not None and sell_data_list:
+            for sell_data in sell_data_list:
+                lower_price = sell_data.close[0] * 0.9 + 0.02
+                valid_day = sell_data.datetime.datetime(1)
+                print('sell 平仓', sell_data._name, self.getposition(sell_data).size)
+                o = self.close(data=sell_data, exectype=bt.Order.Limit, price=lower_price, valid=valid_day)
+                # 记录订单
+                order_list.append(o)
+
+        # 对本次入选股票下单
+        # 每只股票买入资金百分比，预留2%的资金以应付佣金和计算误差
+        if len(order_data_list) > 0:
+            buy_percentage = (1 - 0.02) / len(order_data_list)
+        else:
+            buy_percentage = 0
+
+        # 得到目标市值
+        target_value = buy_percentage * self.broker.getvalue()
+
+        # 为保证先卖后买，股票按照持仓市值从大到小排序
+        order_data_list.sort(key=lambda d: self.broker.getvalue([d]), reverse=True)
+        self.log('下单, 目标的股票个数 %i, targetvalue %.2f, 当前总市值 %.2f' %
+                 (len(order_data_list), target_value, self.broker.getvalue()))
+        print(f'{self.data0.datetime.date(0)} 当天入选股票: {"、".join(stock._name for stock in order_data_list)}')
+
+        # 处理股票池中的股票
+        if order_data_list is not None and order_data_list:
+            for d in order_data_list:
+                if len(d.open) > 0 and len(d.close) > 0:
+                    # 按照次日开盘价算
+                    size = int(
+                        abs((self.broker.getvalue([d]) - target_value) / d.open[1] // 100 * 100))
+                    # 该股票的下一个实际交易日
+                    valid_day = d.datetime.datetime(1)
+                    # 如果持仓过多，卖
+                    if self.broker.getvalue([d]) > target_value:
+                        # 次日跌停价近似值
+                        lower_price = d.close[0] * 0.9 + 0.02
+                        print(f"{d._name}持仓过多调整")
+                        o = self.sell(data=d, size=size, exectype=bt.Order.Limit,
+                                      price=lower_price, valid=valid_day)
+                    # 持仓过少，买
+                    else:
+                        # 次日涨停价近似值
+                        upper_price = d.close[0] * 1.1 - 0.02
+                        print(f"{d._name}持仓过少调整")
+                        o = self.buy(data=d, size=size, exectype=bt.Order.Limit,
+                                     price=upper_price, valid=valid_day)
+                    order_list.append(o)
+
+
+# def get_code_name(stock_code):
+#     # # name = "null"
+#     # with open('/home/c/Downloads/QuantitativeTrading/stockData/stockListName.csv', newline='',
+#     #           encoding='UTF-8') as csvfile:
+#     #     reader = csv.DictReader(csvfile)
+#     #     for row in reader:
+#     #         if row['code'] == stock_code:
+#     #             name = row['name']
+#     #             break  # 找到匹配项后，停止遍历
+#
+#     return name

@@ -5,35 +5,38 @@ from tqdm import tqdm
 import pandas as pd
 import datetime
 
+
 class stockCommissionScheme(bt.CommInfoBase):
     params = (
-        ('stamp_duty',0.005), # ??????
-        ('commission',0.001), # ?????
-        ('stocklike',True),
-        ('commtype',bt.CommInfoBase.COMM_PERC)
+        ('stamp_duty', 0.005),
+        ('commission', 0.001),
+        ('stocklike', True),
+        ('commtype', bt.CommInfoBase.COMM_PERC)
     )
 
     def _getcommission(self, size, price, pseudoexec):
-        if size > 0: # ??????????????
+        if size > 0:
             return size * price * self.p.commission
-        elif size < 0: # ??????????????
-            return size * price * (self.p.stamp_duty+self.p.commission)
+        elif size < 0:
+            return size * price * (self.p.stamp_duty + self.p.commission)
         else:
             return 0
 
+
 # bt.feeds.GenericCSVData
 class PandasDataExtend(bt.feeds.GenericCSVData):
-    lines = ('peTTM','pbMRQ','psTTM')
-    params = (('peTTM',8),
-              ('pbMRQ',9),
-              ('psTTM',10))
+    lines = ('peTTM', 'pbMRQ', 'psTTM')
+    params = (('peTTM', 8),
+              ('pbMRQ', 9),
+              ('psTTM', 10))
 
-"""
-base_args：基础信息(BaseData)
-strategy_data_list：股票列表数据
-strategy_name：回测策略
-"""
-def Cerebrorun(base_args,strategy_data_list,strategy_name):
+
+def cerebro_run(base_args, strategy_data_list, strategy_name):
+    """
+    base_args：基础信息(BaseData)
+    strategy_data_list：股票列表数据
+    strategy_name：回测策略
+    """
     cerebro = bt.Cerebro()
     # 添加观测器
     cerebro.addobserver(bt.observers.Broker)
@@ -56,16 +59,16 @@ def Cerebrorun(base_args,strategy_data_list,strategy_name):
             raise ValueError(f"CSV file {fname} does not contain a column named 'datetime'.")
 
         # 将'datetime'列转换为datetime类型
-        df['date'] = pd.to_datetime(df['date'],format='%Y%m%d')
+        df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
         # df = df.dropna()
         # 筛选出符合时间范围的数据
         df = df[(df['date'] >= base_args.fromdate) & (df['date'] <= base_args.todate)]
-        if len(df)== 0:
-            print('bad ############',fname)
+        if len(df) == 0:
+            print('bad ############', fname)
             continue
         # 创建临时文件，用于存储筛选后数据
         with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as temp_file:
-            df.to_csv(temp_file.name, index=False,encoding='GBK')
+            df.to_csv(temp_file.name, index=False, encoding='GBK')
         # date_df = pd.read_csv(
         #     fname,
         #     usecols=['date'],
@@ -94,7 +97,7 @@ def Cerebrorun(base_args,strategy_data_list,strategy_name):
         data = PandasDataExtend(
             dataname=temp_file.name,
             fromdate=base_args.fromdate,
-            todate=base_args.todate+ datetime.timedelta(days=1),
+            todate=base_args.todate + datetime.timedelta(days=1),
             nullvalue=0.0,
             dtformat=('%Y-%m-%d'),
             datetime=0,
@@ -133,5 +136,3 @@ def Cerebrorun(base_args,strategy_data_list,strategy_name):
     result = cerebro.run(runonce=False)
     # print(result)
     return result
-
-

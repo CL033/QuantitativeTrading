@@ -70,7 +70,7 @@ def Cerebrorun1(base_args, strategy_data_list, strategy_name):
 
         # 将'datetime'列转换为datetime类型
         df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
-
+        df.fillna(0, inplace=True)
         df = df.dropna()
         # 筛选出符合时间范围的数据
         df = df[(df['date'] >= base_args.fromdate) & (df['date'] <= base_args.todate)]

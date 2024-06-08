@@ -2,9 +2,8 @@ import backtrader as bt
 import pandas as pd
 from choose_stock.choose_stock import filter_stocks_by_PS_PE_PB
 from entity.stock_info import *
+import util.constant as CONSTANT
 import os
-from datetime import timedelta
-from datetime import datetime
 
 from startegy.base_strategy import BaseStrategy
 
@@ -16,7 +15,7 @@ class FactorStockStrategy(BaseStrategy):
     )
 
     # choose_stock_df = list()
-    csv_files_dir = "D:/Pycharm/Workplace/Trader/stockData/change"
+    csv_files_dir = CONSTANT.TEST_DATA_DIR+"/factory_strategy_data"
 
     def __init__(self):
         # print(len(self.data))
@@ -39,7 +38,7 @@ class FactorStockStrategy(BaseStrategy):
 
         )
         # 读取名字列表
-        name_df = pd.read_csv('D:/Pycharm/Workplace/Trader/stockData/name.csv', encoding='GBK')
+        name_df = pd.read_csv(CONSTANT.DEFAULT_DIR+'/stockListName.csv', encoding='GBK')
         self.code_name_dict = dict(zip(name_df['code'], name_df['name']))
 
     def next(self):
@@ -93,64 +92,64 @@ class FactorStockStrategy(BaseStrategy):
         self.order_list = []
         # 最终选取结果
         self.ranks = filter_stocks_by_PS_PE_PB(self.stocks, self.currDate)
-        print(str(self.ranks))
         # 按成交量从大到小排序
         self.ranks.sort(key=lambda d: d.volume, reverse=True)
         # 取前 num_volume名
         self.ranks = self.ranks[0:self.p.num_volume]
 
         # 对于上期入选的股票，本次不入选则先进行平仓
-        data_toSell = set(self.lastStock) - set(self.ranks)
-        for d in data_toSell:
-            lowerprice = d.close[0] * 0.9 + 0.02
-            validday = d.datetime.datetime(1)
-            print('sell 平仓', d._name, self.getposition(d).size)
-            o = self.close(data=d, exectype=bt.Order.Limit, price=lowerprice, valid=validday)
-            # 记录订单
-            self.order_list.append(o)
-
-        # 本次下单的股票
-        # 每只股票买如资金百分比，预留2%的资金以应付佣金和计算误差
-        if (len(self.ranks) > 0):
-            buypercentage = (1 - 0.02) / len(self.ranks)
-        else:
-            buypercentage = 0
-
-        # 得到目标市值
-        targetvalue = buypercentage * self.broker.getvalue()
-        # 为保证先卖后买，股票按照持仓市值从大到小排序
-        self.ranks.sort(key=lambda d: self.broker.getvalue([d]), reverse=True)
-        self.log('下单, 目标的股票个数 %i, targetvalue %.2f, 当前总市值 %.2f' %
-                 (len(self.ranks), targetvalue, self.broker.getvalue()))
-
-        print(f'{self.data0.datetime.date(0)} 当天入选股票: {"、".join(stock._name for stock in self.ranks)}')
-        # print('{}当天入选股票{}\n'.format(self.data0.datetime.date(0),str(self.ranks)))
-        # 买入股票池中的股票
-        for d in self.ranks:
-            # print('股票代码',d._name)
-
-            if (len(d.open) > 0 and len(d.close) > 0):
-                # 按照次日开盘价算
-                size = int(
-                    abs((self.broker.getvalue([d]) - targetvalue) / d.open[1] // 100 * 100))
-                # 该股票的下一个实际交易日
-                validday = d.datetime.datetime(1)
-                # 如果持仓过多，卖
-                if self.broker.getvalue([d]) > targetvalue:
-                    # 次日跌停价近似值
-                    lowerprice = d.close[0] * 0.9 + 0.02
-                    print(f"{d._name}持仓过多调整")
-                    o = self.sell(data=d, size=size, exectype=bt.Order.Limit,
-                                  price=lowerprice, valid=validday)
-                # 持仓过少，买
-                else:
-                    # 次日涨停价近似值
-                    upperprice = d.close[0] * 1.1 - 0.02
-                    print(f"{d._name}持仓过少调整")
-                    o = self.buy(data=d, size=size, exectype=bt.Order.Limit,
-                                 price=upperprice, valid=validday)
-                # print(o)
-                # 记录股票订单
-                self.order_list.append(o)
+        sell_list = set(self.lastStock) - set(self.ranks)
+        self.handel_order(self.ranks, self.order_list, sell_list)
+        # for d in data_toSell:
+        #     lowerprice = d.close[0] * 0.9 + 0.02
+        #     validday = d.datetime.datetime(1)
+        #     print('sell 平仓', d._name, self.getposition(d).size)
+        #     o = self.close(data=d, exectype=bt.Order.Limit, price=lowerprice, valid=validday)
+        #     # 记录订单
+        #     self.order_list.append(o)
+        #
+        # # 本次下单的股票
+        # # 每只股票买如资金百分比，预留2%的资金以应付佣金和计算误差
+        # if (len(self.ranks) > 0):
+        #     buypercentage = (1 - 0.02) / len(self.ranks)
+        # else:
+        #     buypercentage = 0
+        #
+        # # 得到目标市值
+        # targetvalue = buypercentage * self.broker.getvalue()
+        # # 为保证先卖后买，股票按照持仓市值从大到小排序
+        # self.ranks.sort(key=lambda d: self.broker.getvalue([d]), reverse=True)
+        # self.log('下单, 目标的股票个数 %i, targetvalue %.2f, 当前总市值 %.2f' %
+        #          (len(self.ranks), targetvalue, self.broker.getvalue()))
+        #
+        # print(f'{self.data0.datetime.date(0)} 当天入选股票: {"、".join(stock._name for stock in self.ranks)}')
+        # # print('{}当天入选股票{}\n'.format(self.data0.datetime.date(0),str(self.ranks)))
+        # # 买入股票池中的股票
+        # for d in self.ranks:
+        #     # print('股票代码',d._name)
+        #
+        #     if (len(d.open) > 0 and len(d.close) > 0):
+        #         # 按照次日开盘价算
+        #         size = int(
+        #             abs((self.broker.getvalue([d]) - targetvalue) / d.open[1] // 100 * 100))
+        #         # 该股票的下一个实际交易日
+        #         validday = d.datetime.datetime(1)
+        #         # 如果持仓过多，卖
+        #         if self.broker.getvalue([d]) > targetvalue:
+        #             # 次日跌停价近似值
+        #             lowerprice = d.close[0] * 0.9 + 0.02
+        #             print(f"{d._name}持仓过多调整")
+        #             o = self.sell(data=d, size=size, exectype=bt.Order.Limit,
+        #                           price=lowerprice, valid=validday)
+        #         # 持仓过少，买
+        #         else:
+        #             # 次日涨停价近似值
+        #             upperprice = d.close[0] * 1.1 - 0.02
+        #             print(f"{d._name}持仓过少调整")
+        #             o = self.buy(data=d, size=size, exectype=bt.Order.Limit,
+        #                          price=upperprice, valid=validday)
+        #         # print(o)
+        #         # 记录股票订单
+        #         self.order_list.append(o)
         # 跟踪上次买入的股票列表
         self.lastStock = self.ranks
