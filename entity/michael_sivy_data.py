@@ -13,8 +13,10 @@ pbMRQ：市净率
 psTTM：市销率
 
 """
+
+
 class StockInfo:
-    def __init__(self,code,name,open,high,low, close,volume,amount,change):
+    def __init__(self, code, name, open, high, low, close, volume, amount, change):
         self.code = code
         self.name = name
         self.open = open
@@ -24,7 +26,6 @@ class StockInfo:
         self.volume = volume
         self.amount = amount
         self.change = change
-
 
     def to_dict(self):
         return {

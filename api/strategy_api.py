@@ -1,27 +1,29 @@
-from flask import Flask, Blueprint, request, jsonify
+from flask import Blueprint
 from entity.base_cerebro_data import BaseCerebroData
 from startegy.factor_stock_strategy import FactorStockStrategy
 from startegy.michael_sivy_strategy import MichaelSivyStrategy
-from analysis.analyser import Analyzer
+from startegy.strategy_data.michael_sivy_data import MichaelSivyData
+from startegy.strategy_data.factor_data import FactorData
+from util.analyser import Analyzer
 from util.data import BackTestData
 import util.constant as CONSTANT
 import glob
 import os
-from strategy_start.base_start import *
-from strategy_start.michael_sivy import *
+import datetime
+from startegy.cerebro.cerebro import BaseCerebro
 strategy = Blueprint('strategy', __name__, url_prefix='/strategy')
 
 
 @strategy.route('/factor', methods=['POST'])
 def factor_choose():
-    datadir = CONSTANT.TEST_DATA_DIR + '/factory_strategy_data'
-    datafilelist = glob.glob(os.path.join(datadir, '*.csv'))
-    # ½«Ä¿Â¼datadirÖ®ÖĞµÄÊı¾İ¼ÓÔØ½øÏµÍ³Ö®ÖĞ
+    # å°†ç›®å½•datadirä¹‹ä¸­çš„æ•°æ®åŠ è½½è¿›ç³»ç»Ÿä¹‹ä¸­
     fromdate = datetime.datetime(2024, 1, 2)
     todate = datetime.datetime(2024, 4, 26)
     base_data = BaseCerebroData(10000000, 0.001, 0.001, fromdate, todate)
-    result = cerebro_run(base_data, datafilelist, FactorStockStrategy)
-    # ·ÀÖ¹ÏÂµ¥Ê±ÏÖ½ğ²»¹»±»¾Ü¾ø£¬Ö»ÔÚÖ´ĞĞÊ±¼ì²éÏÖ½ğ¹»²»¹»
+    factor_data = FactorData(base_args=base_data)
+    cerebro = BaseCerebro(base_args=base_data, abstract_data=factor_data, strategy_name=FactorStockStrategy)
+    result = cerebro.run()
+    # é˜²æ­¢ä¸‹å•æ—¶ç°é‡‘ä¸å¤Ÿè¢«æ‹’ç»ï¼Œåªåœ¨æ‰§è¡Œæ—¶æ£€æŸ¥ç°é‡‘å¤Ÿä¸å¤Ÿ
     analyze = BackTestData(Analyzer(result))
     json_data = analyze.get_json_data(log=True)
     return json_data
@@ -30,14 +32,18 @@ def factor_choose():
 @strategy.route('/michaelSivy', methods=['POST'])
 def michaelSivy_choose():
     # datadir = CONSTANT.DEFAULT_DIR + '/micsiv_testdata'
-    datadir = CONSTANT.TEST_DATA_DIR + '/MicSivData'
-    datafilelist = glob.glob(os.path.join(datadir, '*.csv'))
-    # ½«Ä¿Â¼datadirÖ®ÖĞµÄÊı¾İ¼ÓÔØ½øÏµÍ³Ö®ÖĞ
-    fromdate = datetime.datetime(2023, 1, 1)
+    # datadir = CONSTANT.TEST_DATA_DIR + '/MicSivData'
+    # datafilelist = glob.glob(os.path.join(datadir, '*.csv'))
+    # å°†ç›®å½•datadirä¹‹ä¸­çš„æ•°æ®åŠ è½½è¿›ç³»ç»Ÿä¹‹ä¸­
+    fromdate = datetime.datetime(2023, 10, 1)
     todate = datetime.datetime(2024, 4, 26)
     base_data = BaseCerebroData(10000000, 0.001, 0.001, fromdate, todate)
-    result = Cerebrorun1(base_data, datafilelist, MichaelSivyStrategy)
-    # ·ÀÖ¹ÏÂµ¥Ê±ÏÖ½ğ²»¹»±»¾Ü¾ø£¬Ö»ÔÚÖ´ĞĞÊ±¼ì²éÏÖ½ğ¹»²»¹»
+    michael_sivy_data = MichaelSivyData(base_data)
+    cerebro = BaseCerebro(base_data,abstract_data=michael_sivy_data, strategy_name=MichaelSivyStrategy)
+    result = cerebro.run()
+    # å®šä¹‰åˆ†æå™¨
+    # é˜²æ­¢ä¸‹å•æ—¶ç°é‡‘ä¸å¤Ÿè¢«æ‹’ç»ï¼Œåªåœ¨æ‰§è¡Œæ—¶æ£€æŸ¥ç°é‡‘å¤Ÿä¸å¤Ÿ
     analyze = BackTestData(Analyzer(result))
     json_data = analyze.get_json_data(log=True)
     return json_data
+

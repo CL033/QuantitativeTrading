@@ -13,6 +13,9 @@ CONSTANT_ADJUST_DATE = {
     10: (9, 30),
     1: (12, 31)
 }
+# 股票数据路径
+csv_files_dir = CONSTANT.DEFAULT_DIR + "/MicSivy/MicSivyData"
+csv_folder_path = CONSTANT.DEFAULT_DIR+'/MicSivy/new'
 
 
 def is_trading_day(date):
@@ -54,22 +57,7 @@ def michael_sivy_filter(stock_data):
 
         # 提取对应的code
         selected_codes = selected_rows['code'].tolist()
-    #
-    # selected_stocks = [
-    #     d for d in stockDatas
-    #     if len(d) > 0  # 至少要有一根实际bar
-    #        and d.datetime.date(0) == currentDate
-    #        and not np.isnan(d.equity_ratio)  # 确保不是NaN
-    #        and not np.isnan(d.dv_ratio)
-    #        and not np.isnan(d.pe_ttm)
-    #        and not np.isnan(d.EPS)
-    #        and not np.isnan(d.dv_ratio)
-    #        and d.dv_ratio > avg_dvRatio  # 股息率大于平均值
-    #        and d.EPS > avg_EPS  # 每股收益增长率大于市场平均值
-    #        and d.equity_ratio < avg_equityRatio  # 产权比率小于市场平均值
-    #        and d.current_ratio > avg_currentRatio  # 流动比率大于市场平均值
-    #        and 0 < d.pe_ttm < avg_peTTm  # 市盈率为正且小于市场平均值
-    # ]
+
     return selected_codes
 
 
@@ -101,8 +89,7 @@ class MichaelSivyStrategy(BaseStrategy):
     params = dict(
         num_volume=10  # 取成交量前100名
     )
-    # csv_files_dir = CONSTANT.DEFAULT_DIR + "/micsiv_testdata"
-    csv_files_dir = CONSTANT.TEST_DATA_DIR + "/MicSivData"
+
     def __init__(self):
         self.end_stock = []  # 最后一天的股票池股票（未到调仓时间）
         self.lastStock = []  # 上次交易股票的列表
@@ -131,7 +118,7 @@ class MichaelSivyStrategy(BaseStrategy):
             end_stock = self.lastStock
             for d in end_stock:
                 csv_file_name = f"{d._name}.csv"
-                csv_file_path = os.path.join(self.csv_files_dir, csv_file_name)
+                csv_file_path = os.path.join(csv_files_dir, csv_file_name)
                 df = pd.read_csv(csv_file_path, encoding='GBK')
                 # match_rows = df[df['date'] == self.data.datetime.date(0)]
                 df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
@@ -165,19 +152,8 @@ class MichaelSivyStrategy(BaseStrategy):
         print(self.data0.datetime.date(0))
         current_date = self.data0.datetime.date(0)
         adjusted_date = get_adjusted_date(current_date)
-        # # 获取当前年份
-        # current_year = current_date.year
-        # adjustment_dates = {
-        #     4: (current_year, 3, 31),
-        #     7: (current_year, 6, 30),
-        #     10: (current_year, 9, 30),
-        #     1: (current_year - 1, 12, 31)
-        # }
-        # adjusted_date = datetime(
-        #     *adjustment_dates.get(current_date.month, (current_year, current_date.month, current_date.day)))
-
         filename = adjusted_date.strftime('%Y%m%d')  # 格式化日期为 YYYYMMDD
-        csv_folder_path = CONSTANT.DEFAULT_DIR+'/new'
+        # 读取年报数据文件
         filename = filename + '.csv'
         csv_file_path = os.path.join(csv_folder_path, filename)
 

@@ -135,15 +135,3 @@ class BaseStrategy(bt.Strategy):
                                      price=upper_price, valid=valid_day)
                     order_list.append(o)
 
-
-# def get_code_name(stock_code):
-#     # # name = "null"
-#     # with open('/home/c/Downloads/QuantitativeTrading/stockData/stockListName.csv', newline='',
-#     #           encoding='UTF-8') as csvfile:
-#     #     reader = csv.DictReader(csvfile)
-#     #     for row in reader:
-#     #         if row['code'] == stock_code:
-#     #             name = row['name']
-#     #             break  # 找到匹配项后，停止遍历
-#
-#     return name

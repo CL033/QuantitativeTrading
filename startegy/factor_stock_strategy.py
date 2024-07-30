@@ -1,11 +1,13 @@
 import backtrader as bt
 import pandas as pd
-from choose_stock.choose_stock import filter_stocks_by_PS_PE_PB
 from entity.stock_info import *
 import util.constant as CONSTANT
 import os
 
 from startegy.base_strategy import BaseStrategy
+
+# 股票数据路径
+csv_files_dir = CONSTANT.DEFAULT_DIR + "/Factor/FactoryData"
 
 
 class FactorStockStrategy(BaseStrategy):
@@ -14,11 +16,7 @@ class FactorStockStrategy(BaseStrategy):
         num_volume=10  # 取成交量前100名
     )
 
-    # choose_stock_df = list()
-    csv_files_dir = CONSTANT.TEST_DATA_DIR+"/factory_strategy_data"
-
     def __init__(self):
-        # print(len(self.data))
         self.end_stock = []  # 最后一天的股票池股票（未到调仓时间）
         self.lastStock = []  # 上次交易股票的列表
         # 记录最后一天的选股结果
@@ -38,7 +36,7 @@ class FactorStockStrategy(BaseStrategy):
 
         )
         # 读取名字列表
-        name_df = pd.read_csv(CONSTANT.DEFAULT_DIR+'/stockListName.csv', encoding='GBK')
+        name_df = pd.read_csv(CONSTANT.DEFAULT_DIR + '/stockListName.csv', encoding='GBK')
         self.code_name_dict = dict(zip(name_df['code'], name_df['name']))
 
     def next(self):
@@ -47,7 +45,7 @@ class FactorStockStrategy(BaseStrategy):
             end_stock = filter_stocks_by_PS_PE_PB(self.stocks, self.data.datetime.date(0))
             for d in end_stock:
                 csv_file_name = f"{d._name}.csv"
-                csv_file_path = os.path.join(self.csv_files_dir, csv_file_name)
+                csv_file_path = os.path.join(csv_files_dir, csv_file_name)
                 df = pd.read_csv(csv_file_path, encoding='GBK')
                 # match_rows = df[df['date'] == self.data.datetime.date(0)]
 
@@ -100,56 +98,20 @@ class FactorStockStrategy(BaseStrategy):
         # 对于上期入选的股票，本次不入选则先进行平仓
         sell_list = set(self.lastStock) - set(self.ranks)
         self.handel_order(self.ranks, self.order_list, sell_list)
-        # for d in data_toSell:
-        #     lowerprice = d.close[0] * 0.9 + 0.02
-        #     validday = d.datetime.datetime(1)
-        #     print('sell 平仓', d._name, self.getposition(d).size)
-        #     o = self.close(data=d, exectype=bt.Order.Limit, price=lowerprice, valid=validday)
-        #     # 记录订单
-        #     self.order_list.append(o)
-        #
-        # # 本次下单的股票
-        # # 每只股票买如资金百分比，预留2%的资金以应付佣金和计算误差
-        # if (len(self.ranks) > 0):
-        #     buypercentage = (1 - 0.02) / len(self.ranks)
-        # else:
-        #     buypercentage = 0
-        #
-        # # 得到目标市值
-        # targetvalue = buypercentage * self.broker.getvalue()
-        # # 为保证先卖后买，股票按照持仓市值从大到小排序
-        # self.ranks.sort(key=lambda d: self.broker.getvalue([d]), reverse=True)
-        # self.log('下单, 目标的股票个数 %i, targetvalue %.2f, 当前总市值 %.2f' %
-        #          (len(self.ranks), targetvalue, self.broker.getvalue()))
-        #
-        # print(f'{self.data0.datetime.date(0)} 当天入选股票: {"、".join(stock._name for stock in self.ranks)}')
-        # # print('{}当天入选股票{}\n'.format(self.data0.datetime.date(0),str(self.ranks)))
-        # # 买入股票池中的股票
-        # for d in self.ranks:
-        #     # print('股票代码',d._name)
-        #
-        #     if (len(d.open) > 0 and len(d.close) > 0):
-        #         # 按照次日开盘价算
-        #         size = int(
-        #             abs((self.broker.getvalue([d]) - targetvalue) / d.open[1] // 100 * 100))
-        #         # 该股票的下一个实际交易日
-        #         validday = d.datetime.datetime(1)
-        #         # 如果持仓过多，卖
-        #         if self.broker.getvalue([d]) > targetvalue:
-        #             # 次日跌停价近似值
-        #             lowerprice = d.close[0] * 0.9 + 0.02
-        #             print(f"{d._name}持仓过多调整")
-        #             o = self.sell(data=d, size=size, exectype=bt.Order.Limit,
-        #                           price=lowerprice, valid=validday)
-        #         # 持仓过少，买
-        #         else:
-        #             # 次日涨停价近似值
-        #             upperprice = d.close[0] * 1.1 - 0.02
-        #             print(f"{d._name}持仓过少调整")
-        #             o = self.buy(data=d, size=size, exectype=bt.Order.Limit,
-        #                          price=upperprice, valid=validday)
-        #         # print(o)
-        #         # 记录股票订单
-        #         self.order_list.append(o)
         # 跟踪上次买入的股票列表
         self.lastStock = self.ranks
+
+
+# 三低策略筛选方法
+def filter_stocks_by_PS_PE_PB(stockDatas, currentDate):
+    selected_stocks = [
+        d for d in stockDatas
+        if len(d) > 0  # 至少要有一根实际bar
+           and d.datetime.date(0) == currentDate
+           and 0 < d.peTTM < 20
+           # and d.pbMRQ >= 0
+           and d.close < 10
+        # and d.psTTM >= 0
+        # and d.psTTM <= 1
+    ]
+    return selected_stocks

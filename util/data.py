@@ -3,30 +3,6 @@ import decimal
 import json
 from typing import Any
 import pandas
-from flask import request
-
-
-class BaseData:
-    def __init__(self, request):
-        # com_code 股票代码
-        self.com_code = request.form.get('comCode', default='000001').split(',')
-        # start_date 回测开始时间
-        self.start_date = request.form.get('startDate', default='20200128')
-        # end_date 回测结束时间
-        self.end_date = request.form.get('endDate', default='20230128')
-        #  初始资金
-        self.start_cash = int(request.form.get('startCash', default=1000000))
-        #  手续费
-        self.comm = float(request.form.get('comm', default=0.0005))
-        #  印花税
-        self.stamp_duty = float(request.form.get('stampDuty', default=0.001))
-        #  股票代码复权方式 “qfq” “hfq”
-        self.adjust = request.form.get('adjust', default='qfq')
-        # slip_perc 滑点比例
-        self.slip_perc = float(request.form.get('slipPerc', default=0.0001))
-        # 是否为选股模式
-        self.choose = False
-
 
 def strftime_date(df: pandas.DataFrame):
     try:
@@ -52,7 +28,7 @@ class DateEncoder(json.JSONEncoder):
 
 class BackTestData:
     def __init__(self, analyse):
-        if (analyse is not None):
+        if analyse is not None:
             perf_stats = analyse.perf_stats_all
             # 相关指标
             self.backtest_indicators = perf_stats.to_dict(orient='dict')
