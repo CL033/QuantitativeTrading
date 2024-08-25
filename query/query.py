@@ -1,3 +1,5 @@
+from langchain.chains.sql_database.query import SQLInputWithTables
+
 import util.constant as CONSTANT
 from langchain_community.utilities import SQLDatabase
 from langchain.chains import create_sql_query_chain
@@ -7,6 +9,11 @@ from langchain.prompts import ChatPromptTemplate
 import pymysql
 from collections import OrderedDict
 import datetime
+import langchain
+langchain.debug = True
+from langchain_core.output_parsers.openai_tools import PydanticToolsParser
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.runnables import RunnablePassthrough
 
 pymysql.install_as_MySQLdb()
 db_config = {
@@ -80,7 +87,15 @@ class SQL_Query:
 
     def query(self, query_msg):
         chain = create_sql_query_chain(self.model, db, prompt=self.prompt)
-        response = chain.invoke({"question": query_msg})
+        # 指定数据库表名字
+        response = chain.invoke(SQLInputWithTables(question=query_msg, table_names_to_use=[CONSTANT.TABLE]))
+        # print(chain.get_prompts()[0].pretty_print())
+        # context = db.get_context()
+        # prompt_with_context = chain.get_prompts()[0].partial(table_info=context["table_info"])
+        # print(chain.get_prompts()[0])
+        # full_chain = RunnablePassthrough.assign(table_names_to_use={"table_names_to_use": "financial"}) | chain
+        # response = chain.invoke({"question": query_msg})
+        # response = None
         print("================================")
         print(response)
         pattern = r"(?i)WHERE\s+.*?(?=LIMIT|\;)"
@@ -120,12 +135,40 @@ class SQL_Query:
 
 
 if __name__ == '__main__':
+    import sys
     llm = create_model()
     sql_query = SQL_Query(llm)
+    # sys.stdout.reconfigure(encoding='utf-8')
     # print(sql_query.prompt.format(input="市盈率>0,市销率ps>-0.6,",top_k=10,table_info="financial"))
-    # context = db.get_context()
+    context = db.get_context()
     # print(list(context))
     # print(context['table_info'])
-    # answer = sql_query.query("市销率ps>-0.6")
-    answer = sql_query.query("市盈率>0,市销率ps>-0.6")
-    print(answer)
+    answer = sql_query.query("市销率ps>-0.6")
+    # answer = sql_query.query("市盈率>0,市销率ps>-0.6")
+    # print(answer)
+    # class Table(BaseModel):
+    #     """Table in SQL database."""
+    #
+    #     name: str = Field(description="Name of table in SQL database.")
+    #
+    #
+    # table_names = "\n".join(db.get_usable_table_names())
+    # system = f"""Return the names of ALL the SQL tables that MIGHT be relevant to the user question. \
+    # The tables are:
+    #
+    # {table_names}
+    #
+    # Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed."""
+    #
+    # prompt = ChatPromptTemplate.from_messages(
+    #     [
+    #         ("system", system),
+    #         ("human", "{input}"),
+    #     ]
+    # )
+    # llm_with_tools = llm.bind_tools([Table])
+    # output_parser = PydanticToolsParser(tools=[Table])
+    #
+    # table_chain = prompt | llm_with_tools | output_parser
+    #
+    # table_chain.invoke({"input": "市销率ps>-0.6"})

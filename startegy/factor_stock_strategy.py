@@ -17,6 +17,7 @@ class FactorStockStrategy(BaseStrategy):
     )
 
     def __init__(self):
+        super().__init__()
         self.end_stock = []  # 最后一天的股票池股票（未到调仓时间）
         self.lastStock = []  # 上次交易股票的列表
         # 记录最后一天的选股结果
@@ -43,6 +44,7 @@ class FactorStockStrategy(BaseStrategy):
         if self.data.datetime.date(0) == self.data_end_date:  # 当前时间是否是最后一天
             # 最后一天入选的股票
             end_stock = filter_stocks_by_PS_PE_PB(self.stocks, self.data.datetime.date(0))
+
             for d in end_stock:
                 csv_file_name = f"{d._name}.csv"
                 csv_file_path = os.path.join(csv_files_dir, csv_file_name)

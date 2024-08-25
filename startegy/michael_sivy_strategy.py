@@ -15,7 +15,7 @@ CONSTANT_ADJUST_DATE = {
 }
 # 股票数据路径
 csv_files_dir = CONSTANT.DEFAULT_DIR + "/MicSivy/MicSivyData"
-csv_folder_path = CONSTANT.DEFAULT_DIR+'/MicSivy/new'
+csv_folder_path = CONSTANT.DEFAULT_DIR + '/MicSivy/new'
 
 
 def is_trading_day(date):
@@ -52,9 +52,8 @@ def michael_sivy_filter(stock_data):
         average_current_ratio = stock_data['current_ratio'].mean()
 
         # 筛选符合条件的行：equity_ratio大于平均equity_ratio且current_ratio小于平均current_ratio
-        selected_rows = stock_data[
-            (stock_data['equity_ratio'] > average_equity_ratio) & (stock_data['current_ratio'] < average_current_ratio)]
-
+        selected_rows = stock_data.query(
+            'equity_ratio > @average_equity_ratio and current_ratio < @average_current_ratio')
         # 提取对应的code
         selected_codes = selected_rows['code'].tolist()
 
@@ -91,32 +90,38 @@ class MichaelSivyStrategy(BaseStrategy):
     )
 
     def __init__(self):
-        self.end_stock = []  # 最后一天的股票池股票（未到调仓时间）
-        self.lastStock = []  # 上次交易股票的列表
-        # 记录最后一天的选股结果
-        self.choose_stock_df = list()
-        self.stocks = self.datas
-        # 记录以往的订单，在调整之前全部取消未成交的订单
-        self.order_list = []
+        super().__init__(
+            # 定时器
+            QuarterEndChecker()
+        )
         # 最后一天时间，即数据的最后一天
         if self.data.datetime.date(0) is not None:
             self.data_end_date = self.data.datetime.date(0)
-        # self.quarter_end_checker = QuarterEndChecker()
-
-        # 定时器
-        self.add_timer(
-            when=bt.Timer.SESSION_START,
-            allow=QuarterEndChecker()
-        )
-        # 读取名字列表
-        name_df = pd.read_csv(CONSTANT.DEFAULT_DIR+'/stockListName.csv', encoding='GBK')
-        self.code_name_dict = dict(zip(name_df['code'], name_df['name']))
+            self.day_before_end_date = self.data_end_date - timedelta(days=1)
 
     def next(self):
+
+        if self.data.datetime.date(0) == self.day_before_end_date:
+            print(f"前一天处理订单{self.day_before_end_date}\n")
+            # 前一天还有股票，第二天全部卖出
+            if self.last_stocks:
+                self.handel_order(sell_data_list=self.last_stocks)
         if self.data.datetime.date(0) == self.data_end_date:  # 当前时间是否是最后一天
-            # 最后一天入选的股票
-            end_stock = self.lastStock
-            for d in end_stock:
+            adjusted_date = get_adjusted_date(self.data_end_date)
+            filename = adjusted_date.strftime('%Y%m%d')  # 格式化日期为 YYYYMMDD
+            # 读取年报数据文件
+            filename = filename + '.csv'
+            csv_file_path = os.path.join(csv_folder_path, filename)
+
+            # 检查文件是否存在再尝试读取
+            if os.path.exists(csv_file_path):
+                df = pd.read_csv(csv_file_path).fillna(0)
+                print(f"成功读取了日期为 {filename} 的数据")
+            else:
+                raise FileNotFoundError(f"未找到日期为 {filename} 的CSV文件")
+            ranks = michael_sivy_filter(df)
+            ranks = self.filter_stocks(ranks)
+            for d in ranks:
                 csv_file_name = f"{d._name}.csv"
                 csv_file_path = os.path.join(csv_files_dir, csv_file_name)
                 df = pd.read_csv(csv_file_path, encoding='GBK')
@@ -135,17 +140,14 @@ class MichaelSivyStrategy(BaseStrategy):
                     volume = match_rows['volume'].iloc[0]
                     amount = match_rows['amount'].iloc[0]
                     change = match_rows['change'].iloc[0]
-                    # pctChg = match_rows['pct_chg'].iloc[0]
-                    # peTTM = match_rows['pe'].iloc[0]
-                    # pbMRQ = match_rows['pb'].iloc[0]
-                    # psTTM = match_rows['ps'].iloc[0]
-                    stock_info = StockInfo(code, name, open, high, low, close, volume, amount,change
-                                    ).to_dict()
+                    stock_info = StockInfo(code, name, open, high, low, close, volume, amount, change
+                                           ).to_dict()
                     self.choose_stock_df.append(stock_info)
 
     def notify_timer(self, timer, when, *args, **kwargs):
         self.stock_state_list = []
-        self.rebalanced_portfolio()  # 进行持仓调整
+        if when != self.data_end_date:
+            self.rebalanced_portfolio()  # 进行持仓调整
 
     # 进行调仓
     def rebalanced_portfolio(self):
@@ -171,31 +173,28 @@ class MichaelSivyStrategy(BaseStrategy):
         if len(self.datas[0]) == self.data0.buflen():
             return
         # 取消以往所下的订单（对于已经成交的不生效）
-        for o in self.order_list:
+        for o in self.order_lists:
             self.cancel(o)
         # 重置订单列表
-        self.order_list = []
+        self.order_lists = []
         # 最终选取结果
-        self.ranks = michael_sivy_filter(df)
-        print(f"code：{len(self.ranks)}")
+        ranks = michael_sivy_filter(df)
+        print(f"code：{len(ranks)}")
         # print(str(self.ranks))
-        self.ranks = self.filter_stocks(self.ranks)
+        ranks = self.filter_stocks(ranks)
         # print(str(self.ranks))
 
         # 按成交量从大到小排序
-        self.ranks.sort(key=lambda d: d.volume, reverse=True)
+        ranks.sort(key=lambda d: d.volume, reverse=True)
 
         # 取前 num_volume名
-        self.ranks = self.ranks[0:self.p.num_volume]
+        ranks = ranks[0:self.p.num_volume]
 
         # 对于上期入选的股票，本次不入选则先进行平仓
-        sell_list = set(self.lastStock) - set(self.ranks)
+        sell_list = set(self.last_stocks) - set(ranks)
 
         # 处理股票池中的股票
-        self.handel_order(self.ranks, self.order_list, sell_list)
-
-        # 跟踪上次买入的股票列表
-        self.lastStock = self.ranks
+        self.handel_order(ranks, self.order_lists, sell_list)
 
     # 进行选股
     def filter_stocks(self, code_list):

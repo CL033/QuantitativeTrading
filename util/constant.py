@@ -3,7 +3,7 @@ DASHSCOPE_API_KEY = "sk-d87ad404b41744ca9f219fa2b123dece"
 
 # 选股策略数据来源默认文件夹名称
 DEFAULT_DIR = 'D:/Pycharm/Data/stockData'
-TEST_DATA_DIR = 'D:/Pycharm/Data'
+TESTDATA_DIR = 'D:/Pycharm/Data/testData'
 
 # mysql 数据库配置
 DB_USER = "root"

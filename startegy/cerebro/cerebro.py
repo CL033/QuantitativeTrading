@@ -1,6 +1,6 @@
 import backtrader as bt
 from startegy.strategy_data.abstract_data import AbstractData
-
+from util.analyser import Analyzer
 
 class stockCommissionScheme(bt.CommInfoBase):
     params = (
@@ -47,12 +47,23 @@ class BaseCerebro:
         cerebro.broker.addcommissioninfo(comminfo)
 
         # 添加分析器
+        # 返回年初至年末的年度收益率
+        cerebro.addanalyzer(bt.analyzers.AnnualReturn, _name='_AnnualReturn')
+        # 计算年化夏普比率
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='_SharpeRatio')
+        # 计算最大回撤相关指标
+        cerebro.addanalyzer(bt.analyzers.DrawDown, _name='_DrawDown')
+        # 计算年化收益
+        cerebro.addanalyzer(bt.analyzers.Returns, _name='_Returns', tann=252)
+        # 返回收益率时序
         cerebro.addanalyzer(bt.analyzers.TimeReturn, _name='_TimeReturn')
         cerebro.addanalyzer(bt.analyzers.PyFolio, _name='_PyFolio')
+
         # 添加策略
         cerebro.addstrategy(self.strategy_name)
         # 返回结果
         result = cerebro.run(runonce=False)
+        # 数据分析
+        analyzer = Analyzer(result)
         # print(result)
-        return result
+        return analyzer

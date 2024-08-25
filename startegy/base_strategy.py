@@ -15,6 +15,24 @@ class BaseStrategy(bt.Strategy):
     name_df = pd.read_csv(CONSTANT.DEFAULT_DIR + '/stockListName.csv', encoding='GBK')
     code_name_dict = dict(zip(name_df['code'], name_df['name']))
 
+    def __init__(self, timer=None):
+        """
+        timer: 如果有自定义定时器，那就按照自定义定时器来；否则默认每天调参
+        """
+        # 上次交易股票的列表
+        self.last_stocks = []
+        # 记录最后一天的选股结果
+        self.choose_stock_df = list()
+        # 记录以往的订单，在调整之前全部取消未成交的订单
+        self.order_lists = []
+        if timer:
+            self.add_timer(
+                when=bt.Timer.SESSION_START,
+                allow=timer
+            )
+        # 读取名字列表
+        name_df = pd.read_csv(CONSTANT.DEFAULT_DIR + '/stockListName.csv', encoding='GBK')
+        self.code_name_dict = dict(zip(name_df['code'], name_df['name']))
 
     def log(self, txt, dt=None):
         """
@@ -37,7 +55,8 @@ class BaseStrategy(bt.Strategy):
                 self.log('买单执行，%s，买入价格：%.2f，买入数量：%i，剩余持仓：%i，仓位变动：%0.2f%%' %
                          (order.data._name, order.executed.price, order.executed.size, order.executed.psize,
                           buy_percent))
-                stock_state = StockState(order.data._name, self.code_name_dict.get(order.data._name,"NULL"), 1, order.executed.price,
+                stock_state = StockState(order.data._name, self.code_name_dict.get(order.data._name, "NULL"), 1,
+                                         order.executed.price,
                                          order.executed.size, '{:.2f}%'.format(buy_percent)).to_dict()
                 self.stock_state_list.append(stock_state)
 
@@ -46,7 +65,8 @@ class BaseStrategy(bt.Strategy):
                 self.log('卖单执行，%s，卖出价格：%.2f，卖出数量：%i, 剩余持仓：%i，仓位变动：%0.2f%%' %
                          (order.data._name, order.executed.price, order.executed.size, order.executed.psize,
                           sell_percent))
-                stock_state = StockState(order.data._name, self.code_name_dict.get(order.data._name,"NULL"), -1, order.executed.price,
+                stock_state = StockState(order.data._name, self.code_name_dict.get(order.data._name, "NULL"), -1,
+                                         order.executed.price,
                                          order.executed.size, '{:.2f}%'.format(sell_percent)).to_dict()
                 self.stock_state_list.append(stock_state)
 
@@ -74,7 +94,7 @@ class BaseStrategy(bt.Strategy):
                                                                position.size * (position.adjbase - position.price)]
         self.fund_df.loc[len(self.fund_df.index)] = [d, cash, value]
 
-    def handel_order(self, order_data_list=None, order_list=None, sell_data_list = None):
+    def handel_order(self, order_data_list=None, order_list=None, sell_data_list=None):
         """
         处理订单
         order_data_list：需要执行调仓的股票列表
@@ -82,9 +102,10 @@ class BaseStrategy(bt.Strategy):
         sell_data_list：不在本次股票池之中，需要进行平仓
         """
 
-        # 先进行平仓处理
         if order_list is None:
             order_list = []
+
+        # 先进行平仓处理
         if sell_data_list is not None and sell_data_list:
             for sell_data in sell_data_list:
                 lower_price = sell_data.close[0] * 0.9 + 0.02
@@ -96,22 +117,21 @@ class BaseStrategy(bt.Strategy):
 
         # 对本次入选股票下单
         # 每只股票买入资金百分比，预留2%的资金以应付佣金和计算误差
-        if len(order_data_list) > 0:
-            buy_percentage = (1 - 0.02) / len(order_data_list)
-        else:
-            buy_percentage = 0
-
-        # 得到目标市值
-        target_value = buy_percentage * self.broker.getvalue()
-
-        # 为保证先卖后买，股票按照持仓市值从大到小排序
-        order_data_list.sort(key=lambda d: self.broker.getvalue([d]), reverse=True)
-        self.log('下单, 目标的股票个数 %i, targetvalue %.2f, 当前总市值 %.2f' %
-                 (len(order_data_list), target_value, self.broker.getvalue()))
-        print(f'{self.data0.datetime.date(0)} 当天入选股票: {"、".join(stock._name for stock in order_data_list)}')
-
-        # 处理股票池中的股票
         if order_data_list is not None and order_data_list:
+            if len(order_data_list) > 0:
+                buy_percentage = (1 - 0.02) / len(order_data_list)
+            else:
+                buy_percentage = 0
+
+            # 得到目标市值
+            target_value = buy_percentage * self.broker.getvalue()
+            # 为保证先卖后买，股票按照持仓市值从大到小排序
+            order_data_list.sort(key=lambda d: self.broker.getvalue([d]), reverse=True)
+            self.log('下单, 目标的股票个数 %i, targetvalue %.2f, 当前总市值 %.2f' %
+                     (len(order_data_list), target_value, self.broker.getvalue()))
+            print(f'{self.data0.datetime.date(0)} 当天入选股票: {"、".join(stock._name for stock in order_data_list)}')
+
+            # 处理股票池中的股票
             for d in order_data_list:
                 if len(d.open) > 0 and len(d.close) > 0:
                     # 按照次日开盘价算
@@ -135,3 +155,5 @@ class BaseStrategy(bt.Strategy):
                                      price=upper_price, valid=valid_day)
                     order_list.append(o)
 
+        # 跟踪上次买入的股票列表
+        self.last_stocks = order_data_list

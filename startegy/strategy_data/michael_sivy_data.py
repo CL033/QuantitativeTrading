@@ -17,6 +17,7 @@ class MichaelSivyData(AbstractData):
     def read_data(self,cerebro):
         datadir = CONSTANT.DEFAULT_DIR + '/MicSivy/MicSivyData'
         datalist = glob.glob(os.path.join(datadir, '*.csv'))
+        datalist = datalist[:500]
         # Ìí¼ÓÊý¾Ý
         print(f"\nLength of strategy_data_list: {len(datalist)}\n")
         print("\n------------Begin add Datas------------\n")
