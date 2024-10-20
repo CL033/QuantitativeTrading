@@ -1,16 +1,16 @@
 # 千问 API key
-DASHSCOPE_API_KEY = "sk-d87ad404b41744ca9f219fa2b123dece"
+DASHSCOPE_API_KEY = "*******"
 
 # 选股策略数据来源默认文件夹名称
-DEFAULT_DIR = 'D:/Pycharm/Data/stockData'
-TESTDATA_DIR = 'D:/Pycharm/Data/testData'
+DEFAULT_DIR = '********'
+TESTDATA_DIR = '*******'
 
 # mysql 数据库配置
 # DB_USER = "root"
-DB_USER = "school_test"
-DB_PASSWORD = "test"
-DB_HOST = "47.99.144.176"
-DB_DATABASE = "listed_company"  # 数据库
+DB_USER = "******"
+DB_PASSWORD = "****"
+DB_HOST = "*******"
+DB_DATABASE = "*******"  # 数据库
 TABLE = "daily"  # 表名
 
 CODE_INDEX = {'上证指数': 'sh000001',
