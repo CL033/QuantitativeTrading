@@ -1,0 +1,8 @@
+POST http://127.0.0.1:5000/common/vanna_query
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="searchMsg"
+
+市销率>0,市盈率TTM大于10
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

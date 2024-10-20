@@ -6,11 +6,12 @@ DEFAULT_DIR = 'D:/Pycharm/Data/stockData'
 TESTDATA_DIR = 'D:/Pycharm/Data/testData'
 
 # mysql 数据库配置
-DB_USER = "root"
-DB_PASSWORD = "17706018486"
-DB_HOST = "localhost"
-DB_DATABASE = "company"  # 数据库
-TABLE = "financial"  # 表名
+# DB_USER = "root"
+DB_USER = "school_test"
+DB_PASSWORD = "test"
+DB_HOST = "47.99.144.176"
+DB_DATABASE = "listed_company"  # 数据库
+TABLE = "daily"  # 表名
 
 CODE_INDEX = {'上证指数': 'sh000001',
               '深证成指': 'sz399001',

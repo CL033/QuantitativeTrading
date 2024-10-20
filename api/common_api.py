@@ -5,6 +5,7 @@ from flask import Flask, Blueprint, request, jsonify
 import json, time
 from query.query import SQL_Query
 from model.tongyi_online import create_model
+from query.vanna_sql import Vanna_SQL
 
 common = Blueprint('common', __name__, url_prefix='/common')
 
@@ -27,6 +28,22 @@ def query():
     model = create_model()
     sql_query = SQL_Query(model)
     result = sql_query.query(query_msg)
+    print('查询结果', result)
+    print(type(result))
+    ordered_json = json.dumps(result, default=custom_json_dumps, indent=4).encode("utf-8")
+    return ordered_json
+
+
+@common.route('/vanna_query', methods=['POST'])
+def vannaQuery():
+    query_msg = request.form.get('searchMsg')
+    print(query_msg)
+    # data = query.get_json()
+    # 检查数据是否有效
+    if query_msg is None:
+        return jsonify({"error": "'query' parameter is missing"}), 400
+    vanna_sql = Vanna_SQL()
+    result = vanna_sql.query(query_msg)
     print('查询结果', result)
     print(type(result))
     ordered_json = json.dumps(result, default=custom_json_dumps, indent=4).encode("utf-8")

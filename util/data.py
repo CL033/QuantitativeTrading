@@ -3,6 +3,9 @@ import decimal
 import json
 from typing import Any
 import pandas
+from collections import OrderedDict
+from decimal import Decimal
+
 
 def strftime_date(df: pandas.DataFrame):
     try:
@@ -55,3 +58,16 @@ class BackTestData:
             data['stock_pool'] = self.stock_pool
         data_json = json.dumps(data, ensure_ascii=False, cls=DateEncoder).encode("utf-8")
         return data_json
+
+
+class StockInfo:
+    def __init__(self, **kwargs):
+        self._attributes = OrderedDict()
+        # 假设数据库返回的列名与 stockInfo 的属性名相同
+        for key, value in kwargs.items():
+            if isinstance(value, Decimal):
+                value = str(value)
+            self._attributes[key] = value
+
+    def to_dict(self):
+        return self._attributes.copy()

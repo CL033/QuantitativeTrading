@@ -1,0 +1,16 @@
+CREATE TABLE `personal_salary` (
+  `id` int(11) NOT NULL AUTO_INCREMENT ,
+  `com_code` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是股票代码',
+  `company_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是公司名称',
+  `year` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是年份',
+  `development_salary` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是研发费用下员工薪酬',
+  `sale_salary` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是销售费用下员工薪酬',
+  `manage_salary` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是管理费用下员工薪酬',
+  `number` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是员工总数',
+  `development_personnal` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是研发人员人数',
+  `sale_personnal` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是销售人员人数',
+  `finance_personnal` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是财务人员人数',
+  `administrative_personnal` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是行政人员人数',
+  `manage_personal` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '这是管理人员人数',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21405 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='这是员工薪酬表'
