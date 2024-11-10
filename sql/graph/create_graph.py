@@ -1,7 +1,7 @@
 from neo4j import GraphDatabase
 import json
 import ast
-
+import util.constant as CONSTANT
 class GraphDatabaseHandler:
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
@@ -56,7 +56,7 @@ class GraphDatabaseHandler:
 
 
 # 连接到图数据库
-graph_db = GraphDatabaseHandler("bolt://localhost:7687", "neo4j", "123456")
+graph_db = GraphDatabaseHandler(CONSTANT.NEO4J_HOST, CONSTANT.NEO4J_USERNAME, CONSTANT.NEO4J_PASSWORD)
 
 # 表结构
 table_name = "backtest_data"
