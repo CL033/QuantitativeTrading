@@ -5,6 +5,10 @@ import os
 from sql.faiss_vector_store import FaissStore
 
 
+
+os.environ["DASHSCOPE_API_KEY"] = ""
+
+
 dashscopeEmbeddings = DashScopeEmbeddings(model="text-embedding-v2")
 
 os.environ["VECTOR_STORE_TYPE"] = "FAISS"
