@@ -1,0 +1,13 @@
+CREATE TABLE `company_executives` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '【公司高管-高管列表】',
+  `org_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司代码',
+  `person_name` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '姓名',
+  `sex` varchar(5) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '性别',
+  `age` varchar(5) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '年龄',
+  `high_degree` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '学历',
+  `hold_num` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持股数(股)',
+  `salary` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '薪酬(元)',
+  `position` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '职务',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `company_executives_org_code_index` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3157570 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='公司高管列表'

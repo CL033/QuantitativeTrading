@@ -1,0 +1,13 @@
+CREATE TABLE `fund_hold` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `fund_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金代码',
+  `end_date` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '发布日期-这里按季度的日期来',
+  `org_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股票代码',
+  `hold_num` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持股数量',
+  `market_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '当期的持股市值',
+  `fund_num_ratio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '占基金总余额的百分比',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `end_date` (`end_date` DESC) USING BTREE,
+  KEY `fund_code` (`fund_code`) USING BTREE,
+  KEY `org_code` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=18875377 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='基金持股表'

@@ -1,0 +1,17 @@
+CREATE TABLE `company_top_ten_shareholds` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '【十大股东】',
+  `org_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司代码',
+  `end_date` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '截止时间',
+  `holder_rank` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '位次',
+  `holder_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股东名称',
+  `shares_type` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股份类型',
+  `hold_num` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持股数(股)',
+  `hold_num_ratio` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '占总股本持股比例',
+  `hold_num_change` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '增减(股)',
+  `change_ratio` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '变动比例',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `company_top_ten_shareholds_org_code_index` (`org_code`) USING BTREE,
+  KEY `y` (`end_date` DESC) USING BTREE,
+  KEY `x` (`org_code`,`end_date` DESC) USING BTREE,
+  KEY `holder_name` (`holder_name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=63729951 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='上市公司十大股东'

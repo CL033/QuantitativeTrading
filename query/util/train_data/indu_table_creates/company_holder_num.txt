@@ -1,0 +1,16 @@
+CREATE TABLE `company_holder_num` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '【股东研究-股东人数】',
+  `org_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司代码',
+  `end_date` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '截止统计时间',
+  `holder_total_num` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股东人数(户)',
+  `total_num_ratio` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '较上期变化(%)',
+  `avg_free_shares` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '人均流通股(股)',
+  `avg_freeshares_ratio` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '较上期变化(%)',
+  `hold_focus` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '筹码集中度',
+  `price` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股价(元)',
+  `avg_hold_amt` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '人均持股金额(元)',
+  `hold_ratio_total` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '十大股东持股合计(%)',
+  `freehold_ratio_total` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '十大流通股东持股合计(%)',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `company_holder_num_org_code_index` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=167956 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='上市公司股东人数'

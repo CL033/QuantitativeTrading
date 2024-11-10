@@ -1,0 +1,11 @@
+CREATE TABLE `fund_info` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `fund_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金代码',
+  `fund_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金名称',
+  `fund_name_abbr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金简称',
+  `fund_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金类别',
+  `fund_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '这个ID是用来查找基金的类别之类的信息',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `fundCode` (`fund_code`) USING BTREE,
+  KEY `fundType` (`fund_type`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=13249 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='公募基金信息表'

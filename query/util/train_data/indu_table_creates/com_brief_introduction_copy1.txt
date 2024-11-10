@@ -1,0 +1,7 @@
+CREATE TABLE `com_brief_introduction_copy1` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `company_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司股票代码',
+  `brief_introduction` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '公司简介',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1681320167642759242 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='公司简介——精简版'

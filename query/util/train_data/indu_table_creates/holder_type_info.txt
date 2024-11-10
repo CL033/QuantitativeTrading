@@ -1,0 +1,12 @@
+CREATE TABLE `holder_type_info` (
+  `holder_type_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '股东类型表的ID',
+  `holder_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股东名称',
+  `holder_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股东类型',
+  `holder_type_special` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '特殊的股东类型，如国家队',
+  `holder_type_special_subclass` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '特殊股东类型的细分类别',
+  PRIMARY KEY (`holder_type_id`) USING BTREE,
+  KEY `x` (`holder_type_special`) USING BTREE,
+  KEY `y` (`holder_type`) USING BTREE,
+  KEY `z` (`holder_name`) USING BTREE,
+  KEY `m` (`holder_type_special_subclass`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=153000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='股东类型表'

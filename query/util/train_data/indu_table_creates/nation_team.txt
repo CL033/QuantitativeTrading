@@ -1,0 +1,10 @@
+CREATE TABLE `nation_team` (
+  `nation_team_id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '国家队主键',
+  `name_first` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '一级公司名',
+  `name_second` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '二级公司名',
+  `sharehold_number` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持股家数',
+  `introduce` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '简介',
+  `phone` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '公司电话',
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '公司地址',
+  PRIMARY KEY (`nation_team_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=310064 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='国家队员表'

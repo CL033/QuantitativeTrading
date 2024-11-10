@@ -1,0 +1,12 @@
+CREATE TABLE `backtest_results` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `strategy_id` int DEFAULT NULL COMMENT '策略代码',
+  `backtesting_time` int DEFAULT NULL COMMENT '回测次数',
+  `annualized_returns` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '年化收益率',
+  `cumulative_earnings` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '总收益率',
+  `maximum_drawdown` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '最大回撤',
+  `start_date` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '开始',
+  `end_date` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '结束',
+  `images` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci COMMENT '走势图',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci

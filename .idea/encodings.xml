@@ -10,13 +10,13 @@
     <file url="file://$PROJECT_DIR$/entity/michael_sivy_data.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/entity/stock_state.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/model/tongyi_online.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/query/data/11.txt" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/query/query.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/query/request.py" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/query/data/11.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/query/query.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/query/request.py" charset="GBK" />
     <file url="file://$PROJECT_DIR$/query/search.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/query/util/sql_create.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/query/util/train_data/table_creates/personal_salary.txt" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/query/vanna_sql.py" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/query/util/sql_create.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/query/util/train_data/table_creates/personal_salary.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/query/vanna_sql.py" charset="GBK" />
     <file url="file://$PROJECT_DIR$/startegy/OShaughnessy_strategy.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/startegy/base_strategy.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/startegy/cerebro/cerebro.py" charset="UTF-8" />
@@ -26,10 +26,10 @@
     <file url="file://$PROJECT_DIR$/stockData/overview_all_data/sh.600000.csv" charset="GBK" />
     <file url="file://$PROJECT_DIR$/strategy_start/base_start.py" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/strategy_start/michael_sivy.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/test/test.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/util/analyser.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/util/changeData/changeData.py" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/util/constant.py" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/test/test.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/util/analyser.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/util/changeData/changeData.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/util/constant.py" charset="GBK" />
     <file url="PROJECT" charset="GBK" />
   </component>
 </project>

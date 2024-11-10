@@ -1,0 +1,17 @@
+CREATE TABLE `profit_forecast_em` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `company_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司股票代码',
+  `name` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '名称',
+  `studies_number` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '研报数',
+  `investment_rating_buy` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构投资评级(近六个月)-买入',
+  `investment_rating_raise` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构投资评级(近六个月)-增持',
+  `investment_rating_neutra` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构投资评级(近六个月)-中性',
+  `investment_rating_reduction` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构投资评级(近六个月)-减持',
+  `investment_rating_sell` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构投资评级(近六个月)-卖出',
+  `2022_earnings_Forecast` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '2022预测每股收益',
+  `2023_earnings_Forecast` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '2023预测每股收益',
+  `2024_earnings_Forecast` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '2024预测每股收益',
+  `2025_earnings_Forecast` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '2025预测每股收益',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3045 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='盈利预测-东方财富'

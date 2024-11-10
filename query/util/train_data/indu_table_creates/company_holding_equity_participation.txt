@@ -1,0 +1,11 @@
+CREATE TABLE `company_holding_equity_participation` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `org_code` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司代码',
+  `date` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '截止时间',
+  `org_name` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '公司名称',
+  `participation_in_holding_relationships` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '控参股关系',
+  `participation_in_the_holding_ratio` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '参控比例(%)',
+  `business_nature` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '业务性质',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `company_holding_equity_participation_org_code_index` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=5741924 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='企业控股参股 '

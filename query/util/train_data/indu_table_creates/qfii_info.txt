@@ -1,0 +1,9 @@
+CREATE TABLE `qfii_info` (
+  `qfii_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'qfii成员ID',
+  `qfii_cn_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'qfii的中文名',
+  `qfii_en_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'qfii的英文名',
+  `qfii_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'qfii的注册地',
+  `qfii_approval_date` datetime DEFAULT NULL COMMENT 'qfii批准日期',
+  `qfii_trusteeship` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'qfii主托管行',
+  PRIMARY KEY (`qfii_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=814 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='QFII成员表'

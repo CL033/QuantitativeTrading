@@ -1,0 +1,14 @@
+CREATE TABLE `north_daily_ten_deal_info` (
+  `north_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '北向资金id',
+  `release_date` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发布日期',
+  `org_source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构来源-如沪股通',
+  `org_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '公司的股票代码',
+  `org_rank` int DEFAULT NULL COMMENT '每日排名',
+  `org_name_abbr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '公司别名',
+  `buy_amount` decimal(18,2) DEFAULT NULL COMMENT '买入金额 单位人民币',
+  `sell_amount` decimal(18,2) DEFAULT NULL COMMENT '卖出金额 单位人民币',
+  `total_amount` decimal(18,2) DEFAULT NULL COMMENT '买入卖出总金额 单位人民币',
+  PRIMARY KEY (`north_id`) USING BTREE,
+  KEY `y` (`org_code`) USING BTREE,
+  KEY `x` (`release_date`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4241 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='北向资金的十大成交活跃股'

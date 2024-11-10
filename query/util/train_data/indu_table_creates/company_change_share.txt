@@ -1,0 +1,15 @@
+CREATE TABLE `company_change_share` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `org_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司代码',
+  `end_date` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '日期',
+  `holder_name` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '变动人',
+  `change_num` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '变动数量(股)',
+  `average_price` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '交易均价(元)',
+  `change_after_holdnum` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '结存股票(股)',
+  `trade_way` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '交易方式',
+  `executive_name` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '董监高管',
+  `position` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '高管职位',
+  `executive_relation` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '与高管关系',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `company_change_share_org_code_index` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=6003084 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='上市公司持股变动表'

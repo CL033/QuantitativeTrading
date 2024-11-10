@@ -1,0 +1,13 @@
+CREATE TABLE `north_individual_share_info` (
+  `individual_share_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '北向资金的个股ID',
+  `org_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '北向资金投资的公司的股票代码',
+  `org_name_abbr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '北向资金投资的公司的简称',
+  `hold_num` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '北向资金的持股量',
+  `hold_num_ratio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '占总股本的比例',
+  `individual_share_date` datetime DEFAULT NULL COMMENT '所持股的日期',
+  `market_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持仓市值',
+  `org_num` int DEFAULT NULL COMMENT '机构数量',
+  PRIMARY KEY (`individual_share_id`) USING BTREE,
+  KEY `date` (`individual_share_date`) USING BTREE COMMENT '时间索引',
+  KEY `orgcode` (`org_code`) USING BTREE COMMENT '公司号索引'
+) ENGINE=InnoDB AUTO_INCREMENT=1213800 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='北向资金的个股表'

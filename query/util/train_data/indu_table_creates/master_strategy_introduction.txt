@@ -1,0 +1,11 @@
+CREATE TABLE `master_strategy_introduction` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `strategy_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `strategy_id` int DEFAULT NULL,
+  `master_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `master_Introduction` varchar(2555) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `investment_logic` varchar(2555) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `condition` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci

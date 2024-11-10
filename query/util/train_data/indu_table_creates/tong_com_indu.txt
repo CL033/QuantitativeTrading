@@ -1,0 +1,15 @@
+CREATE TABLE `tong_com_indu` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `com_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是股票代码',
+  `com_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是公司名称',
+  `fir_indu` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是申万一级行业',
+  `sec_indu` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是申万二级行业',
+  `tir_indu` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是申万三级行业',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `fir_indu_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是一级行业代码',
+  `sec_indu_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是二级行业代码,
+  `tir_indu_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '这是三级行业代码',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `id` (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=5396 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='上市公司申万行业分类'

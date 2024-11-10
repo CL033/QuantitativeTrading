@@ -1,0 +1,11 @@
+CREATE TABLE `stock_news_em` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `company_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司股票代码',
+  `news_headline` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '新闻标题',
+  `news` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '新闻内容',
+  `release_time` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发布时间',
+  `news_source` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文章来源',
+  `news_link` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '新闻链接',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3243199881 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='个股新闻 '

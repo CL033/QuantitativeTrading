@@ -1,0 +1,13 @@
+CREATE TABLE `rzrj` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `zqdm` varchar(20) COLLATE utf8mb4_general_ci NOT NULL COMMENT '上市公司股票代码',
+  `date` varchar(20) COLLATE utf8mb4_general_ci NOT NULL COMMENT '日期',
+  `rzmre` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '融资买入额 单位: 元',
+  `rzye` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '融资余额 单位: 元',
+  `rqmcl` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '融券卖出量 单位: 股',
+  `rqyl` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '融券余量 单位: 股',
+  `rqye` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '融券余额 单位: 元',
+  `rzrqye` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '融资融券余额 单位: 元',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3806832 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='公司事件表'

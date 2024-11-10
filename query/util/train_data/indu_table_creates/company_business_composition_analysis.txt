@@ -1,0 +1,16 @@
+CREATE TABLE `company_business_composition_analysis` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `org_code` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司代码',
+  `report_date` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '时间',
+  `mainop_type` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '分类种类 1为按行业分类 2为按产品分类 3为按地区分类',
+  `item_name` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主营构成',
+  `main_business_income` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主营收入(元)',
+  `mbi_ratio` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '收入比例',
+  `main_business_cost` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主营成本(元)',
+  `mbc_ratio` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '成本比例',
+  `main_business_rpofit` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主营利润(元)',
+  `mbr_ratio` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '利润比例',
+  `gross_rpofit_ratio` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '毛利率(%)',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `company_business_composition_analysis_org_code_index` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=35101603 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='上市公司主营构成分析'

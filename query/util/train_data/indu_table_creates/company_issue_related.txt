@@ -1,0 +1,23 @@
+CREATE TABLE `company_issue_related` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '【公司概况-发行相关】',
+  `org_code` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司代码',
+  `found_date` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '成立日期',
+  `listing_date` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市时间',
+  `after_issue_pe` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发行市盈率(倍)',
+  `online_issue_date` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '网上发行日期',
+  `issue_way` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发行方式',
+  `par_value` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '每股面值(元)',
+  `total_issue_num` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发行量(股)',
+  `issue_price` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '每股发行价(元)',
+  `dec_sumissuefee` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发行费用(元)',
+  `total_funds` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发行总市值(元)',
+  `net_raise_funds` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '募集资金净额(元)',
+  `open_price` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '首日开盘价(元)',
+  `close_price` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '首日收盘价(元)',
+  `turnoverrate` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '首日换手率',
+  `high_price` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '首日最高价(元)',
+  `offline_vap_ratio` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '网下配售中签率',
+  `online_issue_lwr` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '定价中签率',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `company_issue_related_org_code_index` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=209726 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='上市公司发行相关'

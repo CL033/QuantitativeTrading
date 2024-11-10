@@ -1,0 +1,13 @@
+CREATE TABLE `north_daily_participant_info` (
+  `north_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '北向资金的机构每日持股情况的id',
+  `org_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股票代码',
+  `individual_share_date` datetime DEFAULT NULL COMMENT '交易日期',
+  `participant_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '参与者的代码',
+  `participant_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '参与者的名字',
+  `hold_num` decimal(18,2) DEFAULT NULL COMMENT '持股数量',
+  `hold_num_ratio` decimal(18,2) DEFAULT NULL COMMENT '占总股本的比例',
+  PRIMARY KEY (`north_id`) USING BTREE,
+  KEY `orgCode` (`org_code`) USING BTREE,
+  KEY `date` (`individual_share_date`) USING BTREE,
+  KEY `participantCode` (`participant_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=17073687 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='北向资金的机构每日持股情况'

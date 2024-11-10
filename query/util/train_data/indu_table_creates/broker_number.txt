@@ -1,0 +1,6 @@
+CREATE TABLE `broker_number` (
+  `broker_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '券商成员表ID',
+  `broker_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '券商的代码',
+  `broker_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '券商名',
+  PRIMARY KEY (`broker_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='券商成员表'

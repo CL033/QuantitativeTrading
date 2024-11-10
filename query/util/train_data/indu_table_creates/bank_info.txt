@@ -1,0 +1,9 @@
+CREATE TABLE `bank_info` (
+  `bank_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '银行的ID',
+  `bank_cn_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '中文名',
+  `bank_en_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '英文名',
+  `bank_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '银行编码',
+  `bank_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构类型',
+  PRIMARY KEY (`bank_id`) USING BTREE,
+  KEY `x` (`bank_type`,`bank_cn_name`) USING BTREE COMMENT '公司名与类型的索引'
+) ENGINE=InnoDB AUTO_INCREMENT=4561 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='银行成员表'

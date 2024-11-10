@@ -1,11 +1,17 @@
+from pathlib import Path
+
 from entity.base_cerebro_data import BaseCerebroData
 from query.vanna_sql import Vanna_SQL
+from sql.graph.search_garph import SearchGraph
 from startegy.OShaughnessy_strategy import OShaughnessyStrategy
 from startegy.strategy_data.OShaughnessy_data import *
 
 from util.data import BackTestData
 import datetime
 from startegy.cerebro.cerebro import BaseCerebro
+from util.data import StockInfo
+import pandas as pd
+from tqdm import tqdm
 
 
 def test_Oshaughnessy():
@@ -25,18 +31,57 @@ def test_Oshaughnessy():
     print(f"Time: {endtime}")
 
 
-def testsql():
+def TestSQLTrain():
     vanna_sql = Vanna_SQL()
-    # vanna_sql.appRun()
-    # vanna_sql.train(documentation="返回的字段只要 ‘id’,‘ts_code’,‘close_x’ 再加上查询的字段即可")
-    # vanna_sql.train(
-    #     question="市盈率>0,市销率ps>-0.6",
-    #     sql="SELECT id,code,close,ps,pe FROM daily where ps>-0.6 and pe>0"
-    # )
-    result = vanna_sql.query("辰光医疗去年的员工数量")
-    print(result)
+    vanna_sql.train(question="市销率>0",
+                    sql="SELECT * FROM `backtest_data` WHERE ps > 0 AND "
+                        "trade_date = (SELECT MAX(trade_date) FROM `backtest_data`)")
+    # current_dir = Path(os.path.abspath(__file__)).parent.parent / 'query' / 'util' / 'train_data' / 'indu_table_creates'
+    # for file_name in os.listdir(current_dir):
+    #     if file_name.endswith('.txt'):
+    #         file_path = current_dir / file_name  # 使用Path对象来构建路径
+    #         # 读取文件内容并输出
+    #         with open(file_path, 'r', encoding='utf-8') as file:
+    #             content = file.read()
+    #             vanna_sql.train(ddl=content)
+
+
+def TestSQLQuery():
+    vanna_sql = Vanna_SQL()
+    file_path = Path(os.path.abspath(__file__)).parent / 'test_file' / 'sql_test2.xlsx'
+    print(file_path)
+    # file_path = 'your_excel_file.xlsx'  # 替换为你的 Excel 文件路径
+    df = pd.read_excel(file_path, engine='openpyxl')
+
+    # 创建一个空列表来存储查询结果
+    results = []
+
+    # 遍历每一行的“样例”数据
+    for index, row in tqdm(df.iterrows(), total=df.shape[0], desc="Processing queries"):
+        sample_query = row['样例']
+
+        # 执行查询
+        result = vanna_sql.query(sample_query)
+
+        # 将结果添加到列表中
+        results.append(result)
+
+    # 将结果列表写回“答案”列
+    df['本地模型回答'] = results
+
+    # 保存修改后的 DataFrame 回到 Excel 文件
+    df.to_excel(file_path, index=False, engine='openpyxl')
+    # result = vanna_sql.query("市销率低于20倍的股票")
+    # print(result)
     # result = vanna_sql.query("市销率>0,市盈率TTM大于10")
     # print(result)
-testsql()
 
 
+if __name__ == '__main__':
+    vanna_sql = Vanna_SQL()
+    search = SearchGraph()
+    query_text = "收盘价小于0"
+    result = vanna_sql.query(search.replace_fields(query_text))
+    print(result)
+    # TestSQLTrain()
+    # TestSQLQuery()

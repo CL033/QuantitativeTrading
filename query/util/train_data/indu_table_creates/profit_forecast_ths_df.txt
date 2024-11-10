@@ -1,0 +1,13 @@
+CREATE TABLE `profit_forecast_ths_df` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `company_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司股票代码',
+  `prediction_index` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '预测指标',
+  `2020_actual_val` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '2020-实际值',
+  `2021_actual_val` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '2021-实际值',
+  `2022_actual_val` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '2022-实际值',
+  `2023_prediction_aver` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '预测2023-平均',
+  `2024_prediction_aver` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '预测2024-平均',
+  `2025_prediction_aver` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '预测2025-平均',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4352425299489 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='盈利预测-同花顺-业绩预测详表'

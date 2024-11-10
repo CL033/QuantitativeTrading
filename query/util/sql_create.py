@@ -12,7 +12,7 @@ db_config = {
 
 # 创建一个目录来存放生成的文件
 current_dir = Path(os.path.abspath(__file__)).parent
-output_dir = current_dir / 'train_data' / 'table_creates'
+output_dir = current_dir / 'train_data' / 'indu_table_creates'
 os.makedirs(output_dir, exist_ok=True)
 
 # 连接数据库

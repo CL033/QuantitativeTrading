@@ -1,0 +1,12 @@
+CREATE TABLE `fund_hold_sum` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `end_date` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '报告期',
+  `org_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股票代码',
+  `org_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '股票简称',
+  `hold_num` decimal(18,2) DEFAULT NULL COMMENT '持股数量',
+  `market_value` decimal(18,2) DEFAULT NULL COMMENT '持有市值',
+  `fund_num` int DEFAULT NULL COMMENT '入驻基金数量',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `end_date` (`end_date` DESC) USING BTREE,
+  KEY `org_code` (`org_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=522888 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='基金持股的总结表'

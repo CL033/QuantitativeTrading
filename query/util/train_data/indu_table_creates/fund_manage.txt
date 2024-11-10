@@ -1,0 +1,10 @@
+CREATE TABLE `fund_manage` (
+  `fund_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '基金公司的id',
+  `fund_manage_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金管理人代码',
+  `fund_manage_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金管理人名称',
+  `fund_manage_name_abbr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金管理人简称',
+  `fund_manage_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金管理人类型',
+  `fund_manage_time` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金管理人成立日期',
+  `fund_manage_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '基金管理人地址',
+  PRIMARY KEY (`fund_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='基金管理人表'

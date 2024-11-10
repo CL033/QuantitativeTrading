@@ -1,0 +1,15 @@
+CREATE TABLE `institutional_investor` (
+  `investor_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `org_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '被控公司的股票代码',
+  `org_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '被控公司的名字',
+  `stage` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '报告季度',
+  `report_date` datetime DEFAULT NULL COMMENT '报告的时间',
+  `hold_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持有公司的名称',
+  `hold_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持有公司的类型',
+  `total_shares` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持股总数（股）',
+  `hold_market_cap` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '持股市值（元）',
+  `total_shares_ratio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '占总股本比例',
+  `free_share_ratio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '占流通股比例',
+  `parent_org_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '父类公司名',
+  PRIMARY KEY (`investor_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=472260 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='股本股东-机构投资者'

@@ -1,0 +1,17 @@
+CREATE TABLE `north_daily_collect` (
+  `north_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '北向资金ID',
+  `org_source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '机构来源-如沪股通',
+  `release_date` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发布日期',
+  `total_amount` decimal(18,2) DEFAULT NULL COMMENT '买入卖出的总成交额含ETF和股票，单位为百万人民币',
+  `buy_amount` decimal(18,2) DEFAULT NULL COMMENT '买入的成交额，单位为百万元人民币',
+  `sell_amount` decimal(18,2) DEFAULT NULL COMMENT '卖出的成交额，单位为百万元人民币',
+  `total_deal_amount` int DEFAULT NULL COMMENT '买入卖出的交易次数',
+  `buy_deal_amount` int DEFAULT NULL COMMENT '买入的交易次数',
+  `sell_deal_amount` int DEFAULT NULL COMMENT '卖出的交易次数',
+  `daily_balance` decimal(18,2) DEFAULT NULL COMMENT '每日的余额，单位为百万元人民币',
+  `daily_balance_ratio` decimal(18,2) DEFAULT NULL COMMENT '每日余额占总余额的百分比',
+  `etf_total_amount` decimal(18,2) DEFAULT NULL COMMENT 'ETF买入卖出的成交额，单位为百万元人民币',
+  PRIMARY KEY (`north_id`) USING BTREE,
+  KEY `x` (`release_date`) USING BTREE,
+  KEY `y` (`org_source`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=431 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='北向资金的每日信息汇总表'

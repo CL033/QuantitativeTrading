@@ -1,0 +1,9 @@
+CREATE TABLE `best_retail` (
+  `retail_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '牛散id',
+  `retail_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '牛散姓名',
+  `retail_rank` int DEFAULT NULL COMMENT '排名',
+  `stage` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '季度',
+  `state` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '状态 0为去大股东去实控人，1为去大股东，不去实控人，2为不去大股东，去实控人，3为不去大股东也不去实控人',
+  PRIMARY KEY (`retail_id`) USING BTREE,
+  KEY `x` (`stage`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=114686 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='牛散表'

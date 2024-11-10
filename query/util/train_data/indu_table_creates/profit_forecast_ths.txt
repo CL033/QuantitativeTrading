@@ -1,0 +1,16 @@
+CREATE TABLE `profit_forecast_ths` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `company_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上市公司股票代码',
+  `year` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '年度',
+  `forecast_institutions_num` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '预测机构数',
+  `earnings_per_share_min` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '每股收益最小值',
+  `earnings_per_share_aver` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '每股收益均值',
+  `earnings_per_share_max` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '每股收益最大值',
+  `earnings_per_share_industry_aver` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '每股收益行业平均数',
+  `net_profit_min` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '净利润最小值',
+  `net_profit_aver` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '净利润均值',
+  `net_profit_max` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '净利润最大值',
+  `net_profit_industry_aver` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '净利润行业平均数',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=9254 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='盈利预测-同花顺'

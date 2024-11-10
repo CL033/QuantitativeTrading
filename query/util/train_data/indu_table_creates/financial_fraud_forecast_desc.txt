@@ -1,0 +1,22 @@
+CREATE TABLE `financial_fraud_forecast_desc` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `industry_name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '行业名称',
+  `company_no` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '公司代码',
+  `year` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上传的年报年份',
+  `previous_year` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上传的年报年份前一年的年份',
+  `proportion_of_receivables` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '应收款项占比',
+  `rate_of_change_receivable` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '应收变化率',
+  `inventory_ratio` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '存货占比',
+  `rate_of_inventory_change` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '存货变化率',
+  `accounts_payable_as_a_percentage` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '应付款项占比',
+  `coping_rate` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '应付变化率',
+  `soft_assets_ratio` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '软资产比例',
+  `debt_with_interest_ratio` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '带息负债率',
+  `cash_sales_ratio` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '现金销售率',
+  `free_cash_flow_rate_of_change` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '自由现金流变动率',
+  `money_cash_anomaly` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '货币现金异常',
+  `gross_margin_anomaly` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '毛利率异常',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `financial_fraud_forecast_desc_company_no_index` (`company_no`) USING BTREE,
+  KEY `financial_fraud_forecast_desc__index2` (`year`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='财务造假预测公司详情表'

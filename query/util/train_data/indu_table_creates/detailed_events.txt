@@ -1,0 +1,7 @@
+CREATE TABLE `detailed_events` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `level2_content_number` bigint NOT NULL COMMENT '具体事件描述编号',
+  `level2_content_detail` longtext COLLATE utf8mb4_general_ci COMMENT '具体事件描述',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2452342517496 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='具体事件表'

@@ -1,0 +1,10 @@
+CREATE TABLE `com_event_ths` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `company_code` varchar(20) COLLATE utf8mb4_general_ci NOT NULL COMMENT '上市公司股票代码',
+  `notice_date` varchar(20) COLLATE utf8mb4_general_ci NOT NULL COMMENT '报告日期',
+  `event_type` varchar(20) COLLATE utf8mb4_general_ci NOT NULL COMMENT '事件类型',
+  `level1_content` longtext COLLATE utf8mb4_general_ci COMMENT '事件描述',
+  `level2_content` longtext COLLATE utf8mb4_general_ci COMMENT '详细事件',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=167642946717 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='公司事件表-同花顺'

@@ -1,0 +1,7 @@
+CREATE TABLE `north_participant_info` (
+  `north_participant_id` int unsigned NOT NULL AUTO_INCREMENT COMMENT '北向的参与者的id',
+  `participant_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '参与者编号',
+  `participant_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '参与者名称',
+  `participant_addr` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '参与者的地址',
+  PRIMARY KEY (`north_participant_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=170 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='北向的参与者信息表'

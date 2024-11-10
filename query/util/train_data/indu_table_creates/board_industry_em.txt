@@ -1,0 +1,17 @@
+CREATE TABLE `board_industry_em` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `billing` int DEFAULT NULL COMMENT '排名',
+  `board_name` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '板块名称',
+  `board_code` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '板块代码',
+  `newest_price` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '最新价',
+  `rise_fall_amount` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '涨跌额',
+  `aggregate_market_value` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '总市值',
+  `turnover_rate` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '换手率',
+  `up_down` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '涨跌幅',
+  `rise_number` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '上涨家数',
+  `fall_number` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '下跌家数',
+  `lead_stocks` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '领涨股票',
+  `lead_stocks_up_down` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '领涨股票-涨跌幅',
+  `UpdateTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3414252331603 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='行业板块-东方财富'
